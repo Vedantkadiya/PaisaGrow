@@ -1,0 +1,1 @@
+{ "build": { "builder": "NIXPACKS" }, "deploy": { "startCommand": "python manage.py migrate --noinput && gunicorn paisagrow.wsgi:application --bind 0.0.0.0:$PORT --workers 2" } }
