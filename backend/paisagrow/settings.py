@@ -1,8 +1,6 @@
 import os
-<<<<<<< HEAD
+
 import sys
-=======
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
@@ -11,7 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-production-xyz123')
 
-<<<<<<< HEAD
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Production guard: refuse to start with the default dev key outside DEBUG mode.
@@ -24,9 +21,8 @@ if not DEBUG and SECRET_KEY == _DEV_KEY:
         file=sys.stderr,
     )
     sys.exit(1)
-=======
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
+
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
@@ -91,7 +87,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-<<<<<<< HEAD
+
 TIME_ZONE     = 'Asia/Kolkata'
 USE_I18N      = True
 USE_TZ        = True
@@ -101,7 +97,7 @@ STATIC_ROOT         = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD        = 'django.db.models.BigAutoField'
-=======
+
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
@@ -112,7 +108,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
 
 REST_FRAMEWORK = {
@@ -130,45 +126,42 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-<<<<<<< HEAD
+
         'anon':             '100/day',
         'user':             '1000/day',
         'login':            '5/min',
         'register':         '3/min',
         'forgot_password':  '3/hour',
-=======
         'anon': '100/day',
         'user': '1000/day',
         'login': '5/min',
         'register': '3/min',
         'forgot_password': '3/hour',
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
+
     },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
 }
 
 SIMPLE_JWT = {
-<<<<<<< HEAD
+
     'ACCESS_TOKEN_LIFETIME':   timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME':  timedelta(days=7),
     'ROTATE_REFRESH_TOKENS':   True,
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES':       ('Bearer',),
-=======
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 }
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
     'http://localhost:3000,http://127.0.0.1:3000'
 ).split(',')
-<<<<<<< HEAD
+
 # Safety check: wildcard CORS with credentials is insecure.
 # NOTE: intentionally not `assert` — Python's -O flag silences asserts.
 if '*' in CORS_ALLOWED_ORIGINS:
@@ -197,7 +190,7 @@ if not DEBUG:
     X_FRAME_OPTIONS                 = 'DENY'
     SECURE_BROWSER_XSS_FILTER       = True
     SECURE_PROXY_SSL_HEADER         = ('HTTP_X_FORWARDED_PROTO', 'https')
-=======
+
 CORS_ALLOW_CREDENTIALS = True
 
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
@@ -219,4 +212,4 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
+
