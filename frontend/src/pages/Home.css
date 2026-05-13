@@ -1,0 +1,129 @@
+.home-page { max-width: 900px }
+
+/* Hero section */
+.home-hero { text-align:center; margin-bottom:36px; padding-top:8px }
+.hero-emoji {
+  font-size:56px; margin-bottom:16px;
+  animation: heroFloat 4s ease-in-out infinite;
+  display:block;
+  filter: drop-shadow(0 0 20px rgba(0,245,192,.4));
+}
+@keyframes heroFloat { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-8px) scale(1.05)} }
+.home-hero .page-title { font-size:36px }
+.home-hero .page-sub { font-size:15px; max-width:520px; margin:0 auto 0 }
+
+/* Budget entry card */
+.budget-entry { margin-bottom:22px; padding:26px 28px }
+
+.be-title    { font-family:var(--font-head); font-size:17px; font-weight:700; margin-bottom:4px }
+.be-subtitle { font-size:13px; color:var(--text2); margin-bottom:20px }
+
+.be-input-row {
+  display:flex; align-items:center;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:12px; overflow:hidden; margin-bottom:16px;
+  transition:border-color var(--transition), box-shadow var(--transition);
+}
+.be-input-row:focus-within {
+  border-color:var(--teal);
+  box-shadow:0 0 0 3px rgba(0,245,192,.08), var(--glow-teal);
+}
+.be-rupee {
+  padding:0 16px;
+  font-family:var(--font-head); font-size:22px; font-weight:800;
+  color:var(--teal); border-right:1px solid var(--border2);
+  text-shadow: 0 0 12px rgba(0,245,192,.4);
+}
+.be-input {
+  flex:1; background:transparent; color:var(--text);
+  font-size:22px; font-family:var(--font-mono); font-weight:700; padding:14px 16px;
+}
+.be-input::-webkit-inner-spin-button,
+.be-input::-webkit-outer-spin-button { -webkit-appearance:none }
+/* FIX: Firefox removes number spinners differently */
+.be-input { -moz-appearance: textfield; }
+.be-input:focus { outline:none }
+.be-input-row .btn { border-radius:0; padding:16px 26px; font-size:14px }
+
+.be-error { color:var(--red); font-size:12px; margin-top:4px; margin-bottom:8px }
+.quick-amounts { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-top:10px }
+
+/* Tip box */
+.tip-box {
+  background:linear-gradient(135deg, rgba(0,245,192,.05), rgba(77,184,255,.04));
+  border:1px solid rgba(0,245,192,.18);
+  border-radius:var(--radius-lg); padding:22px 26px; margin-bottom:22px;
+  position:relative; overflow:hidden;
+}
+.tip-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(0,245,192,.6), transparent);
+}
+.tip-title { font-family:var(--font-head); font-size:17px; font-weight:700; color:var(--teal); margin-bottom:8px }
+.tip-body  { color:var(--text); font-size:13.5px; line-height:1.75; margin-bottom:10px }
+.tip-fact  {
+  font-size:12px; color:var(--text2); padding:10px 14px;
+  background:var(--bg3); border-radius:8px;
+  border-left:3px solid var(--gold);
+}
+
+/* Suggestion section */
+.suggestion-section { margin-bottom:26px }
+.sugg-section-title {
+  font-family:var(--font-head); font-size:16px; font-weight:700;
+  margin-bottom:4px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+}
+.sugg-section-sub { font-family:var(--font-body); font-size:11px; color:var(--text2); font-weight:400 }
+.sugg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:13px; margin:16px 0 }
+
+.suggestion-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px;
+  transition:all var(--transition); position:relative; overflow:hidden;
+}
+.suggestion-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(0,245,192,.04), transparent);
+  opacity:0; transition:opacity var(--transition);
+}
+.suggestion-card:hover { border-color:var(--border2); transform:translateY(-3px); box-shadow:var(--shadow-lg) }
+.suggestion-card:hover::before { opacity:1 }
+.sugg-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px }
+.sugg-ticker { font-family:var(--font-head); font-size:17px; font-weight:800; color:var(--teal) }
+.sugg-name   { font-size:11px; color:var(--text2); margin-top:1px }
+.sugg-nums   { display:grid; grid-template-columns:1fr 1fr; gap:8px }
+.sugg-num-label { font-size:9.5px; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; font-family:var(--font-head) }
+.sugg-num-val   { font-family:var(--font-mono); font-size:14px; font-weight:700 }
+
+.sugg-remaining {
+  text-align:center; font-size:12.5px; color:var(--text2);
+  background:var(--bg3); border-radius:10px; padding:10px 14px;
+  margin-bottom:16px; border:1px solid var(--border);
+}
+.sugg-actions { display:flex; gap:12px; flex-wrap:wrap }
+
+/* Features grid */
+.features-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-top:24px }
+.feature-card {
+  text-align:center; padding:28px 20px;
+  transition:all .25s var(--ease-bounce);
+}
+.feature-card:hover { border-color:rgba(0,245,192,.25); transform:translateY(-4px); box-shadow:var(--shadow-lg), 0 0 20px rgba(0,245,192,.06) }
+.feat-icon  { font-size:34px; margin-bottom:12px; display:block; animation:float 3s ease-in-out infinite }
+.feat-icon:nth-child(1) { animation-delay:.2s }
+.feat-title { font-family:var(--font-head); font-size:15px; font-weight:700; margin-bottom:6px }
+.feat-desc  { font-size:12.5px; color:var(--text2); line-height:1.65 }
+
+/* Save indicator */
+.save-indicator {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12px; color: var(--text2);
+  background: rgba(0,245,192,.06); border: 1px solid rgba(0,245,192,.15);
+  border-radius: 20px; padding: 5px 14px; margin-top: 10px;
+}
+.si-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal); flex-shrink: 0;
+  box-shadow: 0 0 6px var(--teal);
+  animation: pulse 2s ease infinite;
+}

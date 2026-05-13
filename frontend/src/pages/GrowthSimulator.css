@@ -1,0 +1,67 @@
+.growth-sim { max-width:920px }
+
+.sim-controls { padding:24px; margin-bottom:18px }
+.sim-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:20px; margin-bottom:20px }
+.field-hint { font-size:11px; color:var(--text3); margin-top:5px; font-family:var(--font-mono) }
+
+.preset-row { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:4px }
+.preset-btn {
+  background:var(--bg3); border:1px solid var(--border2); color:var(--text2);
+  font-size:12px; padding:7px 14px; border-radius:20px; transition:all var(--transition);
+  font-family:var(--font-head);
+}
+.preset-btn:hover { border-color:var(--teal); color:var(--text) }
+.preset-btn.active { font-weight:700 }
+
+.results-row {
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:12px; margin-bottom:18px;
+}
+@media (max-width:800px) { .results-row { grid-template-columns:1fr 1fr } }
+
+.result-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:18px 20px;
+}
+.big-result {
+  background:linear-gradient(135deg, var(--bg2), rgba(0,245,192,.04));
+  border-color:rgba(0,245,192,.18);
+}
+.rc-label { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--text3); margin-bottom:7px; font-family:var(--font-head) }
+.rc-value { font-family:var(--font-mono); font-size:21px; font-weight:700; letter-spacing:-.4px }
+.big-result .rc-value { font-size:26px }
+.rc-sub   { font-size:11px; color:var(--text3); margin-top:4px; font-family:var(--font-mono) }
+
+.chart-card { padding:22px; margin-bottom:18px }
+.chart-title { font-family:var(--font-head); font-size:15px; font-weight:700; margin-bottom:18px }
+.chart-tooltip {
+  background:var(--bg2); border:1px solid var(--border2); border-radius:10px;
+  padding:12px 16px; font-size:12px; box-shadow:var(--shadow-lg);
+}
+.ct-label { color:var(--text2); font-size:10.5px; margin-bottom:7px; font-family:var(--font-head); text-transform:uppercase; letter-spacing:.06em }
+.ct-row   { display:flex; justify-content:space-between; gap:18px; font-weight:600; font-family:var(--font-mono); margin-bottom:3px }
+
+.milestones-card { padding:22px 24px; margin-bottom:18px }
+.ms-title { font-family:var(--font-head); font-size:15px; font-weight:700; margin-bottom:16px }
+.ms-grid  { display:flex; flex-direction:column; gap:10px }
+.ms-item  {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 16px; background:var(--bg3); border-radius:10px;
+  border:1px solid var(--border); transition:all var(--transition);
+}
+.ms-item:hover { border-color:var(--border2) }
+.ms-label { font-size:13.5px; font-weight:600; font-family:var(--font-head) }
+.ms-hit   { font-family:var(--font-mono); font-size:13px; font-weight:600 }
+.ms-miss  { font-family:var(--font-mono); font-size:12px }
+
+.fun-facts { margin-bottom:18px }
+.ff-title  { font-family:var(--font-head); font-size:16px; font-weight:700; margin-bottom:14px }
+.ff-grid   { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px }
+@media (max-width:600px) { .ff-grid { grid-template-columns:1fr } }
+.ff-item     { text-align:center; padding:20px 14px; transition:all .25s var(--ease-bounce) }
+.ff-item:hover { transform:scale(1.03) }
+.ff-scenario { font-size:12.5px; color:var(--text2); margin-bottom:8px; font-family:var(--font-head) }
+.ff-val      { font-family:var(--font-mono); font-size:20px; font-weight:700; letter-spacing:-.3px }
+.ff-note     {
+  font-size:12.5px; color:var(--text2); text-align:center; padding:12px 16px;
+  background:rgba(255,194,58,.05); border-radius:10px; border-left:3px solid var(--gold);
+}

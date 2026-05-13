@@ -1,0 +1,13 @@
+{
+  "name": "PaisaGrow — Paper Trading",
+  "short_name": "PaisaGrow",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1a7f5a",
+  "background_color": "#0f1117",
+  "description": "Practice investing in Indian stocks. No real money, real market data.",
+  "icons": [
+    { "src": "/logo192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/logo512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -1,0 +1,26 @@
+# Python / Django
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/db.sqlite3
+backend/staticfiles/
+backend/.env
+backend/venv/
+backend/.venv/
+*.egg-info/
+
+# React
+frontend/node_modules/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp

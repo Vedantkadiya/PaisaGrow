@@ -1,0 +1,40 @@
+.lpt {
+  display: inline-flex; align-items: center; gap: 7px;
+  border-radius: 6px; padding: 1px 4px; transition: all .18s;
+}
+.lpt-sm  .lpt-price { font-family: var(--font-mono); font-size: 13px; font-weight: 600 }
+.lpt-md  .lpt-price { font-family: var(--font-mono); font-size: 17px; font-weight: 700 }
+.lpt-lg  .lpt-price { font-family: var(--font-mono); font-size: 23px; font-weight: 700; letter-spacing: -.4px }
+.lpt-xl  .lpt-price { font-family: var(--font-mono); font-size: 30px; font-weight: 700; letter-spacing: -.8px }
+.lpt-change { font-family: var(--font-mono); font-size: 11px; font-weight: 600 }
+
+/* Live dot — only shown when NSE is genuinely open */
+.lpt-live-dot {
+  display: inline-block; width: 5px; height: 5px;
+  background: var(--teal); border-radius: 50%;
+  animation: livePulse 1.6s ease infinite; flex-shrink: 0;
+  box-shadow: 0 0 6px var(--teal);
+}
+@keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.2;transform:scale(.5)} }
+
+/* "PREV CLOSE" badge when market is shut */
+.lpt-closed-tag {
+  font-size: 8px; font-family: var(--font-head); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .07em;
+  background: var(--bg4); color: var(--text3);
+  border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px;
+}
+
+/* Flash animations — only fire when market is live */
+.flash-up   { animation: flashUp   .55s var(--ease) both }
+.flash-down { animation: flashDown .55s var(--ease) both }
+@keyframes flashUp {
+  0%  { background: rgba(0,245,192,.35); box-shadow: 0 0 16px rgba(0,245,192,.5) }
+  60% { background: rgba(0,245,192,.1) }
+  100%{ background: transparent; box-shadow: none }
+}
+@keyframes flashDown {
+  0%  { background: rgba(255,61,90,.35); box-shadow: 0 0 16px rgba(255,61,90,.5) }
+  60% { background: rgba(255,61,90,.1) }
+  100%{ background: transparent; box-shadow: none }
+}

@@ -1,0 +1,100 @@
+.live-ticker-wrap {
+  display: flex; align-items: center;
+  background: rgba(3,6,13,0.97);
+  border-bottom: 1px solid var(--border);
+  height: 36px;
+  /* FIX: overflow:hidden on a position:sticky element breaks sticky in Safari.
+     Overflow is handled by .lt-track-outer instead. */
+  position: sticky; top:0; z-index:150;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px); /* FIX: Safari requires -webkit- prefix */
+}
+/* Animated neon scan line across top */
+.live-ticker-wrap::before {
+  content: ''; position: absolute; top:0; left:-100%; width:60%; height:1px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--gold), transparent);
+  animation: beamScan 5s linear infinite;
+  z-index:2;
+}
+@keyframes beamScan { 0%{left:-60%} 100%{left:110%} }
+
+.lt-status {
+  display:flex; align-items:center; gap:5px;
+  padding:0 12px;
+  font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.12em;
+  white-space:nowrap; border-right:1px solid var(--border); height:100%; flex-shrink:0;
+  font-family:var(--font-head);
+}
+.lt-live       { color:var(--teal) }
+.lt-connecting { color:var(--gold) }
+.lt-sim        { color:var(--text3) }
+
+.lt-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0 }
+.lt-live .lt-dot       { background:var(--teal); animation:blinkDot 1.2s ease infinite; box-shadow:0 0 7px var(--teal) }
+.lt-connecting .lt-dot { background:var(--gold); animation:blinkDot .5s ease infinite }
+.lt-sim .lt-dot        { background:var(--text3) }
+@keyframes blinkDot { 0%,100%{opacity:1} 50%{opacity:.1} }
+
+.lt-market {
+  padding:0 10px; font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:.12em;
+  border-right:1px solid var(--border); height:100%; display:flex; align-items:center; flex-shrink:0;
+  font-family:var(--font-head);
+}
+.lt-open   { color:var(--teal) }
+.lt-closed { color:var(--text3) }
+
+.lt-track-outer { flex:1; overflow:hidden; position:relative; height:100% }
+.lt-track {
+  display:flex; align-items:center; height:100%;
+  white-space:nowrap; animation:tickerMove 55s linear infinite; width:max-content;
+  /* PERF FIX: own compositor layer prevents ticker from invalidating whole page */
+  will-change: transform;
+  contain: layout style; /* PERF FIX: CSS containment — browser skips re-layout of ticker on scroll */
+}
+.lt-track:hover { animation-play-state:paused }
+@keyframes tickerMove { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+.lt-item {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:0 15px; font-size:12px; height:100%;
+  transition:background .15s; cursor:default; position:relative;
+}
+.lt-item:hover { background:rgba(0,245,192,.04) }
+.lt-item + .lt-item::before {
+  content:''; position:absolute; left:0; top:22%; bottom:22%;
+  width:1px; background:var(--border);
+}
+
+.lt-ticker { font-family:var(--font-head); font-weight:800; font-size:10.5px; color:var(--text); letter-spacing:.04em }
+.lt-price  { font-family:var(--font-mono); font-weight:500; color:var(--text); font-size:11.5px }
+.lt-change { font-family:var(--font-mono); font-size:10px; font-weight:700 }
+.lt-up     { color:var(--teal) }
+.lt-down   { color:var(--red) }
+
+.lt-time {
+  padding:0 12px; font-size:9px; color:var(--text3); white-space:nowrap;
+  border-left:1px solid var(--border); flex-shrink:0; font-family:var(--font-mono);
+}
+
+/* Closed status pill */
+.lt-closed-status       { color: var(--text2) }
+.lt-closed-status .lt-dot { background: var(--text3) }
+.lt-closed-note         { font-size: 8px; opacity: .7 }
+
+/* IST Clock */
+.lt-clock {
+  padding: 0 10px; font-size: 10px; font-family: var(--font-mono);
+  color: var(--text3); border-right: 1px solid var(--border); flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Live item glow */
+.lt-item-live .lt-price { color: var(--teal) }
+
+/* Offline warning */
+.lt-offline {
+  padding: 0 10px; font-size: 9px; font-weight: 700;
+  color: var(--gold); font-family: var(--font-head);
+  border-left: 1px solid var(--border); flex-shrink: 0;
+  white-space: nowrap;
+}
