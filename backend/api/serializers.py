@@ -20,6 +20,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({'password': 'Passwords do not match.'})
+<<<<<<< HEAD
         # NOTE: We intentionally do NOT return a distinct "Email already registered"
         # error here. Doing so would let an attacker enumerate which emails have
         # accounts (a user-enumeration oracle). Instead we return a generic message
@@ -32,6 +33,10 @@ class RegisterSerializer(serializers.ModelSerializer):
                 {'email': 'Unable to create an account with these details. '
                           'Please check your information and try again.'}
             )
+=======
+        if User.objects.filter(email=attrs['email']).exists():
+            raise serializers.ValidationError({'email': 'Email already registered.'})
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         return attrs
 
     def create(self, validated_data):
@@ -70,9 +75,13 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class UpdateProfileSerializer(serializers.Serializer):
+<<<<<<< HEAD
     # allow_blank=False rejects empty strings and whitespace-only strings
     # (trim_whitespace=True is the DRF default, but we make it explicit).
     first_name = serializers.CharField(max_length=60, allow_blank=False, trim_whitespace=True)
+=======
+    first_name = serializers.CharField(max_length=60)
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 
 
 # ── UserProfile (budget) ──────────────────────────────────────────────────────
@@ -86,10 +95,13 @@ class BudgetSerializer(serializers.ModelSerializer):
 # ── Portfolio ─────────────────────────────────────────────────────────────────
 
 class PortfolioSerializer(serializers.ModelSerializer):
+<<<<<<< HEAD
     # notes is a TextField on the model (unlimited storage), so we enforce a
     # reasonable max here to prevent the API being used as a free blob store.
     notes = serializers.CharField(max_length=2000, default='', allow_blank=True)
 
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     class Meta:
         model = Portfolio
         fields = (
@@ -108,6 +120,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Buy price must be positive.')
         return value
 
+<<<<<<< HEAD
     def validate_roi1y(self, value):
         # Realistic 1-year ROI range: a stock cannot lose more than 100 % of
         # its value, and a 500 % gain in one year is an extremely generous upper
@@ -117,6 +130,8 @@ class PortfolioSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('roi1y must be between -100 and 500.')
         return value
 
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 
 # ── Watchlist ─────────────────────────────────────────────────────────────────
 

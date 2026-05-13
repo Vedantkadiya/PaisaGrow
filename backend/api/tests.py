@@ -119,6 +119,7 @@ class SecurityTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token2}')
         res = self.client.delete(f'/api/portfolio/{holding_id}/')
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+<<<<<<< HEAD
 
 
 # ── v4 Security Regression Tests ─────────────────────────────────────────────
@@ -222,3 +223,5 @@ class V4SecurityRegressionTests(TestCase):
             'password_changed_at should be set after a password change',
         )
 
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448

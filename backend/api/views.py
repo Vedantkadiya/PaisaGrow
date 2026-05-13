@@ -1,4 +1,5 @@
 """
+<<<<<<< HEAD
 views.py — PaisaGrow API views (v4 — all critique issues resolved)
 
 FIXES IN THIS VERSION (vs v3)
@@ -53,6 +54,20 @@ MISC    RESET_SALT and RESET_MAX_AGE_SECONDS constants kept.
 
 import csv
 import time
+=======
+views.py — PaisaGrow API views
+
+Performance notes (from previous optimisation pass):
+  - LeaderboardView uses DB-side aggregation (SUM/AVG via annotate) — O(1) Python.
+  - PortfolioSummaryView uses a single aggregate query + one .only() fetch.
+  - All list views use .only() to project only needed columns.
+  - All profile saves use save(update_fields=[...]) to avoid full-row writes.
+  - CSV exports use StreamingHttpResponse + values_list() + iterator() for constant memory.
+  - ForgotPasswordView uses .only('id','email') to skip unused user columns.
+"""
+
+import csv
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 from collections import Counter
 from decimal import Decimal, InvalidOperation
 
@@ -65,7 +80,10 @@ from django.core.mail import send_mail
 from django.db import transaction
 from django.db.models import Avg, Count, ExpressionWrapper, F, FloatField, Sum
 from django.http import StreamingHttpResponse
+<<<<<<< HEAD
 from django.utils import timezone
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 
 from rest_framework import generics, serializers as drf_serializers, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -114,6 +132,7 @@ class OwnedMixin:
         return super().get_queryset().filter(user=self.request.user)
 
 
+<<<<<<< HEAD
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 RESET_SALT            = 'pg-reset'
@@ -137,6 +156,8 @@ GOAL_FIELDS      = ('id', 'name', 'icon', 'target_amount', 'current_saved',
 TRACKER_FIELDS   = ('id', 'date', 'type', 'category', 'description', 'amount', 'created_at')
 
 
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _parse_decimal(value, field_name='amount'):
@@ -147,17 +168,44 @@ def _parse_decimal(value, field_name='amount'):
 
 
 def _get_or_create_profile(user):
+<<<<<<< HEAD
     """Non-locking profile fetch — use for reads and non-concurrent writes."""
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     profile, _ = UserProfile.objects.get_or_create(user=user)
     return profile
 
 
 def _get_or_create_profile_locked(user):
+<<<<<<< HEAD
     """SELECT FOR UPDATE — must be called inside @transaction.atomic."""
+=======
+    """Like _get_or_create_profile but with SELECT FOR UPDATE for atomic balance operations."""
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     profile, _ = UserProfile.objects.select_for_update().get_or_create(user=user)
     return profile
 
 
+<<<<<<< HEAD
+=======
+# ── Constants ─────────────────────────────────────────────────────────────────
+
+RESET_SALT            = 'pg-reset'
+RESET_MAX_AGE_SECONDS = 3600
+
+PORTFOLIO_FIELDS = ('id', 'ticker', 'stock_name', 'qty', 'buy_price',
+                    'sector', 'risk', 'roi1y', 'date', 'notes', 'created_at')
+
+WATCHLIST_FIELDS = ('id', 'ticker', 'stock_name', 'sector', 'risk',
+                    'alert_price', 'alert_type', 'added_at')
+
+GOAL_FIELDS = ('id', 'name', 'icon', 'target_amount', 'current_saved',
+               'months', 'expected_return', 'created_at', 'updated_at')
+
+TRACKER_FIELDS = ('id', 'date', 'type', 'category', 'description', 'amount', 'created_at')
+
+
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 # ── Custom JWT ────────────────────────────────────────────────────────────────
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -206,16 +254,20 @@ class MeView(APIView):
         serializer = UpdateProfileSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         request.user.first_name = serializer.validated_data['first_name']
+<<<<<<< HEAD
         # BUG-4 FIX: save(update_fields) writes only what changed.
         # No refresh_from_db needed — budget is unchanged by a name update,
         # and UserSerializer accesses it via obj.profile which is a separate
         # reverse OneToOne lookup (not cached on the User instance itself).
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         request.user.save(update_fields=['first_name'])
         return Response(UserSerializer(request.user).data)
 
     def delete(self, request):
         if not request.user.check_password(request.data.get('password', '')):
             return Response({'error': 'Incorrect password.'}, status=status.HTTP_400_BAD_REQUEST)
+<<<<<<< HEAD
         # Blacklist the refresh token before deletion so it cannot be replayed.
         try:
             raw_refresh = request.data.get('refresh', '')
@@ -223,6 +275,8 @@ class MeView(APIView):
                 JWTRefreshToken(raw_refresh).blacklist()
         except TokenError:
             pass
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         request.user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -230,7 +284,10 @@ class MeView(APIView):
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
+<<<<<<< HEAD
     @transaction.atomic
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -238,6 +295,7 @@ class ChangePasswordView(APIView):
             return Response({'error': 'Current password is incorrect.'}, status=status.HTTP_400_BAD_REQUEST)
         request.user.set_password(serializer.validated_data['new_password'])
         request.user.save(update_fields=['password'])
+<<<<<<< HEAD
 
         # SEC-H3: stamp password_changed_at so reset tokens issued before this
         # moment are rejected by ResetPasswordView.
@@ -262,6 +320,9 @@ class ChangePasswordView(APIView):
                 pass  # already blacklisted or malformed — not an error
 
         return Response({'detail': 'Password changed successfully. Please log in again.'})
+=======
+        return Response({'detail': 'Password changed successfully.'})
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 
 
 class LogoutView(APIView):
@@ -286,6 +347,7 @@ class BudgetView(APIView):
         return Response({'budget': float(profile.budget)})
 
     def patch(self, request):
+<<<<<<< HEAD
         # SEC-H2 FIX: Arbitrary budget set is now restricted to staff only.
         # Regular users cannot set their own balance; budget moves only through
         # deposit / withdraw / invest / sell endpoints.
@@ -294,6 +356,8 @@ class BudgetView(APIView):
                 {'error': 'You do not have permission to set the budget directly.'},
                 status=status.HTTP_403_FORBIDDEN,
             )
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         raw = request.data.get('budget')
         if raw is None:
             return Response({'error': 'budget field required.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -302,8 +366,11 @@ class BudgetView(APIView):
         except (InvalidOperation, TypeError, ValueError):
             return Response({'error': 'Invalid budget value.'}, status=status.HTTP_400_BAD_REQUEST)
 
+<<<<<<< HEAD
         # BUG-2 FIX: Use non-locking helper — a direct set does not need
         # SELECT FOR UPDATE (no concurrent arithmetic, just an assignment).
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         profile        = _get_or_create_profile(request.user)
         profile.budget = new_budget
         profile.save(update_fields=['budget'])
@@ -388,7 +455,10 @@ class _EchoCsvBuffer:
 
 
 def _streaming_csv_response(rows_generator, filename):
+<<<<<<< HEAD
     # filename is always a hardcoded string literal at call sites — no injection risk.
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     response = StreamingHttpResponse(rows_generator, content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
@@ -439,6 +509,7 @@ class PortfolioListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Portfolio.objects.filter(user=self.request.user).only(*PORTFOLIO_FIELDS)
 
+<<<<<<< HEAD
     # BUG-1 FIX: @transaction.atomic belongs on create(), not perform_create().
     # If create() is not atomic, a crash after serializer.save() but before
     # profile.budget deduction would leave an orphaned holding with no
@@ -455,6 +526,9 @@ class PortfolioListCreateView(generics.ListCreateAPIView):
         data['budget'] = float(self._buy_budget)
         return Response(data, status=status.HTTP_201_CREATED)
 
+=======
+    @transaction.atomic
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     def perform_create(self, serializer):
         buy_price = serializer.validated_data.get('buy_price')
         qty       = serializer.validated_data.get('qty')
@@ -465,8 +539,11 @@ class PortfolioListCreateView(generics.ListCreateAPIView):
             raise drf_serializers.ValidationError('Buy price must be positive.')
 
         cost    = Decimal(str(buy_price)) * qty
+<<<<<<< HEAD
         # _get_or_create_profile_locked is safe here: perform_create is called
         # from within the @transaction.atomic create() above.
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         profile = _get_or_create_profile_locked(self.request.user)
 
         if profile.budget < cost:
@@ -476,10 +553,13 @@ class PortfolioListCreateView(generics.ListCreateAPIView):
         profile.budget -= cost
         profile.save(update_fields=['budget'])
 
+<<<<<<< HEAD
         # BUG-3: Stash the post-buy budget on self so create() can include it
         # in the response without issuing another DB query.
         self._buy_budget = profile.budget
 
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         WalletTransaction.objects.create(
             user=self.request.user, type='invest', amount=cost,
             description=f'Bought {holding.qty}x {holding.ticker}',
@@ -494,8 +574,11 @@ class PortfolioDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
     @transaction.atomic
     def destroy(self, request, *args, **kwargs):
         holding = self.get_object()
+<<<<<<< HEAD
 
         # Sell quantity validation
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         try:
             sell_qty = int(request.query_params.get('qty', holding.qty))
         except (TypeError, ValueError):
@@ -504,6 +587,7 @@ class PortfolioDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
         if not (1 <= sell_qty <= holding.qty):
             return Response({'error': 'Invalid sell quantity.'}, status=status.HTTP_400_BAD_REQUEST)
 
+<<<<<<< HEAD
         # SEC-H1 FIX: sell_price from the client is capped against the
         # recorded buy_price.  The client may submit the live market price
         # (so P&L display is realistic), but it cannot exceed
@@ -527,6 +611,16 @@ class PortfolioDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
             # legitimate large gainers while blocking the exploit.
             sell_price = max_allowed_price
 
+=======
+        raw_price = request.query_params.get('price', holding.buy_price)
+        try:
+            sell_price = Decimal(str(raw_price))
+            if not (Decimal('0') < sell_price <= Decimal('1000000')):
+                raise ValueError
+        except (InvalidOperation, TypeError, ValueError):
+            return Response({'error': 'Invalid sell price.'}, status=status.HTTP_400_BAD_REQUEST)
+
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         proceeds         = sell_price * sell_qty
         profile          = _get_or_create_profile_locked(request.user)
         profile.budget  += proceeds
@@ -571,7 +665,11 @@ class PortfolioSummaryView(APIView):
                 'worst_holding':  None,
             })
 
+<<<<<<< HEAD
         # Single Python pass: sector tally + worst holding simultaneously
+=======
+        # Single Python pass: sector tally + worst holding at once
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         holdings     = list(qs.only('ticker', 'sector', 'roi1y'))
         sector_tally = Counter(h.sector for h in holdings if h.sector)
         best_sector  = sector_tally.most_common(1)[0][0] if sector_tally else None
@@ -704,6 +802,10 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
     throttle_classes   = [ForgotPasswordRateThrottle]
 
+<<<<<<< HEAD
+=======
+    # Constant response prevents email enumeration attacks.
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     GENERIC_RESPONSE = 'If that email exists, a reset link has been sent.'
 
     def post(self, request):
@@ -711,6 +813,7 @@ class ForgotPasswordView(APIView):
         user  = User.objects.filter(email=email).only('id', 'email').first()
 
         if user:
+<<<<<<< HEAD
             # SEC-H3: Embed issued-at timestamp in the token payload so
             # ResetPasswordView can compare against password_changed_at.
             token = signing.dumps(
@@ -718,6 +821,9 @@ class ForgotPasswordView(APIView):
                 salt=RESET_SALT,
                 key=django_settings.SECRET_KEY,
             )
+=======
+            token      = signing.dumps({'uid': user.pk}, salt=RESET_SALT, key=django_settings.SECRET_KEY)
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
             reset_link = f"{django_settings.FRONTEND_URL}/reset-password?token={token}"
             send_mail(
                 subject='Reset your PaisaGrow password',
@@ -742,6 +848,7 @@ class ResetPasswordView(APIView):
         new_password = request.data.get('new_password', '')
 
         if not token or not new_password:
+<<<<<<< HEAD
             return Response(
                 {'error': 'token and new_password are required.'},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -759,6 +866,14 @@ class ResetPasswordView(APIView):
                 {'error': 'This reset link has expired. Please request a new one.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+=======
+            return Response({'error': 'token and new_password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            data = signing.loads(token, salt=RESET_SALT, key=django_settings.SECRET_KEY, max_age=RESET_MAX_AGE_SECONDS)
+        except signing.SignatureExpired:
+            return Response({'error': 'This reset link has expired. Please request a new one.'}, status=status.HTTP_400_BAD_REQUEST)
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         except signing.BadSignature:
             return Response({'error': 'Invalid reset link.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -767,17 +882,21 @@ class ResetPasswordView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'Invalid reset link.'}, status=status.HTTP_400_BAD_REQUEST)
 
+<<<<<<< HEAD
         # SEC-H3 FIX: The entire check-and-stamp is inside one transaction.atomic
         # with SELECT FOR UPDATE so two concurrent identical reset requests cannot
         # both pass the iat check before either has stamped password_changed_at
         # (TOCTOU race).  The validate_password call is intentionally kept
         # *outside* the lock because it is pure CPU work (~50ms) and holding a
         # row lock during it would reduce throughput unnecessarily.
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         try:
             validate_password(new_password, user)
         except DjangoValidationError as e:
             return Response({'error': ' '.join(e.messages)}, status=status.HTTP_400_BAD_REQUEST)
 
+<<<<<<< HEAD
         with transaction.atomic():
             # Re-read under lock — any concurrent reset that commits first will
             # have updated password_changed_at, causing the iat check below to
@@ -801,6 +920,10 @@ class ResetPasswordView(APIView):
             profile.password_changed_at = timezone.now()
             profile.save(update_fields=['password_changed_at'])
 
+=======
+        user.set_password(new_password)
+        user.save(update_fields=['password'])
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         return Response({'detail': 'Password reset successfully. You can now log in.'})
 
 
@@ -810,10 +933,13 @@ class LeaderboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+<<<<<<< HEAD
         # DB-side aggregation: O(1) Python, DB does SUM/AVG/SORT/LIMIT.
         # Note: ranks by avg_roi (simple per-holding average), not by
         # position-weighted return.  This is intentional for the gamified
         # leaderboard; document if this should change to weighted return.
+=======
+>>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         top10 = (
             UserProfile.objects
             .select_related('user')
