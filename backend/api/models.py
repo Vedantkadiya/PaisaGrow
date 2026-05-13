@@ -1,11 +1,10 @@
-from django.db import models
+﻿from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 
 
 class Portfolio(models.Model):
     """Tracks stock holdings for a user."""
-<<<<<<< HEAD
     user       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='portfolio')
     ticker     = models.CharField(max_length=20)
     stock_name = models.CharField(max_length=100)
