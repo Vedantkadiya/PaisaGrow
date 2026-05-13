@@ -1,4 +1,4 @@
-from decimal import Decimal
+﻿from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient
@@ -119,11 +119,10 @@ class SecurityTests(TestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token2}')
         res = self.client.delete(f'/api/portfolio/{holding_id}/')
         self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
-<<<<<<< HEAD
 
 
-# ── v4 Security Regression Tests ─────────────────────────────────────────────
-# These tests lock in the three critical v4 security fixes (H1–H3) and the
+# â”€â”€ v4 Security Regression Tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# These tests lock in the three critical v4 security fixes (H1â€“H3) and the
 # ChangePasswordView stamp so future refactors cannot silently revert them.
 
 class V4SecurityRegressionTests(TestCase):
@@ -148,21 +147,21 @@ class V4SecurityRegressionTests(TestCase):
         }, format='json')
         self.holding_id = buy_res.data['id']
 
-    # H1 — Sell price cap
+    # H1 â€” Sell price cap
     def test_sell_price_is_capped_at_4x_buy_price(self):
         """Client cannot manufacture money by submitting an astronomically high sell price."""
         budget_before = float(self.client.get('/api/budget/').data['budget'])
-        # Try to sell 10 shares at 999999 each (buy_price was 100 → max allowed = 400)
+        # Try to sell 10 shares at 999999 each (buy_price was 100 â†’ max allowed = 400)
         self.client.delete(f'/api/portfolio/{self.holding_id}/?qty=10&price=999999')
         budget_after = float(self.client.get('/api/budget/').data['budget'])
         proceeds = budget_after - budget_before
-        # Max legitimate proceeds: 10 × (100 × 4) = 4000
+        # Max legitimate proceeds: 10 Ã— (100 Ã— 4) = 4000
         self.assertLessEqual(
             proceeds, 4000.01,
-            f'Sell price cap bypassed: got proceeds of {proceeds}, expected ≤ 4000',
+            f'Sell price cap bypassed: got proceeds of {proceeds}, expected â‰¤ 4000',
         )
 
-    # H2 — Staff-only budget set
+    # H2 â€” Staff-only budget set
     def test_regular_user_cannot_set_budget_directly(self):
         """PATCH /api/budget/ must return 403 for non-staff users."""
         res = self.client.patch('/api/budget/', {'budget': 9_999_999}, format='json')
@@ -179,7 +178,7 @@ class V4SecurityRegressionTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(float(res.data['budget']), 12345.0)
 
-    # H3 — Single-use reset token
+    # H3 â€” Single-use reset token
     def test_reset_token_is_single_use(self):
         """Re-using the same reset token after a successful reset must be rejected."""
         from django.core import signing
@@ -191,13 +190,13 @@ class V4SecurityRegressionTests(TestCase):
             salt='pg-reset',
             key=django_settings.SECRET_KEY,
         )
-        # First use — should succeed
+        # First use â€” should succeed
         res1 = self.client.post('/api/auth/reset-password/', {
             'token': token, 'new_password': 'NewPass@456',
         }, format='json')
         self.assertEqual(res1.status_code, status.HTTP_200_OK, f'First reset failed: {res1.data}')
 
-        # Second use — token is now stale (password_changed_at > iat)
+        # Second use â€” token is now stale (password_changed_at > iat)
         res2 = self.client.post('/api/auth/reset-password/', {
             'token': token, 'new_password': 'AnotherPass@789',
         }, format='json')
@@ -207,7 +206,7 @@ class V4SecurityRegressionTests(TestCase):
         )
         self.assertIn('already been used', str(res2.data).lower())
 
-    # ChangePasswordView — stamps password_changed_at
+    # ChangePasswordView â€” stamps password_changed_at
     def test_change_password_stamps_password_changed_at(self):
         """After a password change, profile.password_changed_at must be set."""
         from .models import UserProfile
@@ -223,5 +222,3 @@ class V4SecurityRegressionTests(TestCase):
             'password_changed_at should be set after a password change',
         )
 
-=======
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448

@@ -127,13 +127,14 @@ Frontend runs at `http://localhost:3000`.
 ### Backend `.env`
 
 ```env
-SECRET_KEY=your-django-secret-key-here
-DEBUG=True
-ALLOWED_HOSTS=localhost,127.0.0.1
-CORS_ALLOWED_ORIGINS=http://localhost:3000
+DJANGO_SECRET_KEY=your-strong-random-secret-key
+DEBUG=False
+ALLOWED_HOSTS=your-backend.railway.app,localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=https://your-frontend.vercel.app,http://localhost:3000
+FRONTEND_URL=https://your-frontend.vercel.app
 
-# Database (defaults to SQLite if not set)
-DATABASE_URL=sqlite:///db.sqlite3
+# Database (use PostgreSQL in production)
+DATABASE_URL=postgresql://user:pass@host:5432/railway
 ```
 
 ### Frontend `.env`
@@ -141,6 +142,13 @@ DATABASE_URL=sqlite:///db.sqlite3
 ```env
 REACT_APP_API_URL=http://localhost:8000/api
 ```
+
+### Production deploy notes (Railway + Vercel)
+
+- Backend start command now runs: `collectstatic -> migrate -> gunicorn`.
+- Keep `DEBUG=False` in production.
+- Set `DJANGO_SECRET_KEY` to a long random key (32+ chars).
+- Keep `ALLOWED_HOSTS` and `CORS_ALLOWED_ORIGINS` aligned with real deployed domains.
 
 ---
 

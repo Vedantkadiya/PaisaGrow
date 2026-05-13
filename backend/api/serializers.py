@@ -1,4 +1,4 @@
-from rest_framework import serializers
+﻿from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from .models import (
@@ -7,7 +7,7 @@ from .models import (
 )
 
 
-# ── Auth ──────────────────────────────────────────────────────────────────────
+# â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -20,7 +20,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({'password': 'Passwords do not match.'})
-<<<<<<< HEAD
         # NOTE: We intentionally do NOT return a distinct "Email already registered"
         # error here. Doing so would let an attacker enumerate which emails have
         # accounts (a user-enumeration oracle). Instead we return a generic message
@@ -33,10 +32,6 @@ class RegisterSerializer(serializers.ModelSerializer):
                 {'email': 'Unable to create an account with these details. '
                           'Please check your information and try again.'}
             )
-=======
-        if User.objects.filter(email=attrs['email']).exists():
-            raise serializers.ValidationError({'email': 'Email already registered.'})
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
         return attrs
 
     def create(self, validated_data):
@@ -75,16 +70,12 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class UpdateProfileSerializer(serializers.Serializer):
-<<<<<<< HEAD
     # allow_blank=False rejects empty strings and whitespace-only strings
     # (trim_whitespace=True is the DRF default, but we make it explicit).
     first_name = serializers.CharField(max_length=60, allow_blank=False, trim_whitespace=True)
-=======
-    first_name = serializers.CharField(max_length=60)
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 
 
-# ── UserProfile (budget) ──────────────────────────────────────────────────────
+# â”€â”€ UserProfile (budget) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,16 +83,13 @@ class BudgetSerializer(serializers.ModelSerializer):
         fields = ('budget',)
 
 
-# ── Portfolio ─────────────────────────────────────────────────────────────────
+# â”€â”€ Portfolio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class PortfolioSerializer(serializers.ModelSerializer):
-<<<<<<< HEAD
     # notes is a TextField on the model (unlimited storage), so we enforce a
     # reasonable max here to prevent the API being used as a free blob store.
     notes = serializers.CharField(max_length=2000, default='', allow_blank=True)
 
-=======
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
     class Meta:
         model = Portfolio
         fields = (
@@ -120,7 +108,6 @@ class PortfolioSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Buy price must be positive.')
         return value
 
-<<<<<<< HEAD
     def validate_roi1y(self, value):
         # Realistic 1-year ROI range: a stock cannot lose more than 100 % of
         # its value, and a 500 % gain in one year is an extremely generous upper
@@ -130,10 +117,8 @@ class PortfolioSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('roi1y must be between -100 and 500.')
         return value
 
-=======
->>>>>>> ace6b61d9320d878df83eb2a802dda8224d77448
 
-# ── Watchlist ─────────────────────────────────────────────────────────────────
+# â”€â”€ Watchlist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class WatchlistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -142,7 +127,7 @@ class WatchlistSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'added_at')
 
 
-# ── Goals ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Goals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class GoalSerializer(serializers.ModelSerializer):
     progress_pct = serializers.SerializerMethodField()
@@ -161,7 +146,7 @@ class GoalSerializer(serializers.ModelSerializer):
         return min(100, round(float(obj.current_saved) / float(obj.target_amount) * 100))
 
 
-# ── SIP ───────────────────────────────────────────────────────────────────────
+# â”€â”€ SIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class SIPLogSerializer(serializers.ModelSerializer):
     class Meta:
@@ -171,7 +156,7 @@ class SIPLogSerializer(serializers.ModelSerializer):
 
     def validate_month(self, value):
         if not (0 <= value <= 11):
-            raise serializers.ValidationError('Month must be 0–11.')
+            raise serializers.ValidationError('Month must be 0â€“11.')
         return value
 
 
@@ -186,7 +171,7 @@ class SIPSettingsSerializer(serializers.ModelSerializer):
         return value
 
 
-# ── Daily Tracker ─────────────────────────────────────────────────────────────
+# â”€â”€ Daily Tracker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class DailyTrackerEntrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -200,7 +185,7 @@ class DailyTrackerEntrySerializer(serializers.ModelSerializer):
         return value
 
 
-# ── Wallet ────────────────────────────────────────────────────────────────────
+# â”€â”€ Wallet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class WalletTransactionSerializer(serializers.ModelSerializer):
     class Meta:
