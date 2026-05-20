@@ -8,7 +8,7 @@ import { clearAllData } from '../hooks/useLocalStorage';
 const Card = ({ title, children }) => (
   <div style={{
     background: 'var(--bg2)', border: '1px solid var(--border)',
-    borderRadius: 16, padding: '24px', marginBottom: 20
+    borderRadius: 14, padding: 'clamp(14px, 4vw, 24px)', marginBottom: 16
   }}>
     <div style={{ fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 15,
       color: 'var(--text1)', marginBottom: 18, paddingBottom: 12,
@@ -37,7 +37,7 @@ const Input = ({ style, ...props }) => (
 
 const Btn = ({ danger, children, ...rest }) => (
   <button style={{
-    padding: '10px 22px', borderRadius: 10, border: 'none', cursor: 'pointer',
+    padding: '12px 22px', borderRadius: 10, border: 'none', cursor: 'pointer', minHeight: 44,
     fontFamily: 'var(--font-head)', fontWeight: 700, fontSize: 13,
     background: danger ? 'rgba(244,83,108,.12)' : 'var(--teal)',
     color: danger ? 'var(--red)' : '#0a0f1a',
@@ -60,28 +60,26 @@ const Alert = ({ type, msg }) => !msg ? null : (
 export default function ProfilePage({ onBack }) {
   const { user, logout, changePassword, updateProfile, deleteAccount } = useAuth();
 
-  // ── All hooks MUST be declared before any early return (React Rules of Hooks) ──
+  // Guard: if user is somehow null (race with logout event), go back
+  if (!user) { onBack(); return null; }
+
   // Profile
-  const [name, setName]             = useState(user?.name || '');
+  const [name, setName]       = useState(user?.name || '');
   const [profileMsg, setProfileMsg] = useState(null);
   const [profileLoading, setProfileLoading] = useState(false);
 
   // Password
-  const [curPw, setCurPw]   = useState('');
-  const [newPw, setNewPw]   = useState('');
-  const [confPw, setConfPw] = useState('');
-  const [pwMsg, setPwMsg]   = useState(null);
+  const [curPw, setCurPw]     = useState('');
+  const [newPw, setNewPw]     = useState('');
+  const [confPw, setConfPw]   = useState('');
+  const [pwMsg, setPwMsg]     = useState(null);
   const [pwLoading, setPwLoading] = useState(false);
 
   // Delete
-  const [delPw, setDelPw]   = useState('');
-  const [delMsg, setDelMsg] = useState(null);
+  const [delPw, setDelPw]     = useState('');
+  const [delMsg, setDelMsg]   = useState(null);
   const [delLoading, setDelLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  // Guard: if user is somehow null (race with logout event), go back.
-  // MUST come after all hooks so hook call order is stable every render.
-  if (!user) { onBack(); return null; }
 
   const handleProfile = async (e) => {
     e.preventDefault();
@@ -133,7 +131,8 @@ export default function ProfilePage({ onBack }) {
   };
 
   return (
-    <div style={{ maxWidth: 520, margin: '0 auto', padding: '0 4px' }}>
+    {/* RESPONSIVE FIX: fluid container, mobile padding */}
+    <div style={{ maxWidth: 520, margin: '0 auto', padding: '0 4px', width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <button onClick={onBack} style={{
           background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8,

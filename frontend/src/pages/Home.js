@@ -3,7 +3,7 @@ import { getBudgetTier, BUDGET_ADVICE, buildPortfolioSuggestion, STOCKS } from '
 import './Home.css';
 import { sanitizeBudget, MAX_BUDGET } from '../utils/money';
 
-const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000, 5000, 10000];
+const QUICK_AMOUNTS = [50, 100, 200, 500, 1000, 2000, 5000, 10000];
 
 // ── Market Mood Indicator (Item 23) ────────────────────────────────────────────
 function MarketMoodCard() {
@@ -161,7 +161,7 @@ export default function Home({ budget, setBudget, setManualBudget, portfolio, li
       {/* Budget Entry */}
       <div className="card budget-entry">
         <div className="be-title">Enter Your Investment Budget</div>
-        <div className="be-subtitle">How much money do you want to invest? (Minimum ₹100 to start!)</div>
+        <div className="be-subtitle">How much money do you want to invest? (Even ₹50 is a great start!)</div>
 
         <div className="be-input-row">
           <div className="be-rupee">₹</div>

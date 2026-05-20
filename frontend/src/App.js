@@ -84,7 +84,8 @@ function ApiErrorToast() {
   }, []);
   if (!messages.length) return null;
   return (
-    <div style={{ position:'fixed', bottom:80, right:20, zIndex:9999, display:'flex', flexDirection:'column', gap:8, maxWidth:340 }}>
+    {/* RESPONSIVE FIX: position above mobile bottom nav */}
+    <div style={{ position:'fixed', bottom:'calc(72px + env(safe-area-inset-bottom, 0px))', right:16, zIndex:9999, display:'flex', flexDirection:'column', gap:8, maxWidth:'calc(100vw - 32px)' }}>
       {messages.map(m => (
         <div key={m.id} style={{ background:'var(--red)', color:'#fff', padding:'10px 16px', borderRadius:10, fontSize:13, fontFamily:'var(--font-head)', boxShadow:'0 4px 20px rgba(0,0,0,.4)', animation:'slideIn .25s ease' }}>
           ⚠️ {m.text}
@@ -108,7 +109,8 @@ function SuccessToast() {
   }, []);
   if (!messages.length) return null;
   return (
-    <div style={{ position:'fixed', bottom:80, left:20, zIndex:9999, display:'flex', flexDirection:'column', gap:8, maxWidth:340 }}>
+    {/* RESPONSIVE FIX: position above mobile bottom nav */}
+    <div style={{ position:'fixed', bottom:'calc(72px + env(safe-area-inset-bottom, 0px))', left:16, zIndex:9999, display:'flex', flexDirection:'column', gap:8, maxWidth:'calc(100vw - 32px)' }}>
       {messages.map(m => (
         <div key={m.id} style={{ background:'#1a7f5a', color:'#fff', padding:'10px 16px', borderRadius:10, fontSize:13, fontFamily:'var(--font-head)', boxShadow:'0 4px 20px rgba(0,0,0,.4)', animation:'slideIn .25s ease' }}>
           ✅ {m.text}
@@ -152,8 +154,9 @@ function OnboardingModal({ onFinish, budget, onDeposit }) {
   const current = steps[step - 1];
 
   return (
-    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:10000, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-      <div style={{ background:'var(--card)', borderRadius:16, padding:40, maxWidth:420, width:'100%', boxShadow:'0 20px 60px rgba(0,0,0,0.5)' }}>
+    {/* RESPONSIVE FIX: mobile-friendly onboarding modal */}
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:10000, display:'flex', alignItems:'flex-end', justifyContent:'center', padding:0 }}>
+      <div style={{ background:'var(--card)', borderRadius:'20px 20px 0 0', padding:'32px 24px', maxWidth:480, width:'100%', boxShadow:'0 -8px 40px rgba(0,0,0,0.5)' }}>
         <div style={{ fontSize:56, textAlign:'center', marginBottom:16 }}>{current.icon}</div>
         <h2 style={{ textAlign:'center', color:'var(--text)', marginBottom:12, fontSize:20 }}>{current.title}</h2>
         <p style={{ textAlign:'center', color:'var(--text2)', lineHeight:1.6, marginBottom:32 }}>{current.body}</p>

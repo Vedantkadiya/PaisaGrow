@@ -1,4 +1,4 @@
-﻿from rest_framework import serializers
+from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from .models import (
@@ -7,7 +7,7 @@ from .models import (
 )
 
 
-# â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Auth ──────────────────────────────────────────────────────────────────────
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -75,7 +75,7 @@ class UpdateProfileSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=60, allow_blank=False, trim_whitespace=True)
 
 
-# â”€â”€ UserProfile (budget) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── UserProfile (budget) ──────────────────────────────────────────────────────
 
 class BudgetSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,7 +83,7 @@ class BudgetSerializer(serializers.ModelSerializer):
         fields = ('budget',)
 
 
-# â”€â”€ Portfolio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Portfolio ─────────────────────────────────────────────────────────────────
 
 class PortfolioSerializer(serializers.ModelSerializer):
     # notes is a TextField on the model (unlimited storage), so we enforce a
@@ -118,7 +118,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
         return value
 
 
-# â”€â”€ Watchlist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Watchlist ─────────────────────────────────────────────────────────────────
 
 class WatchlistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -127,7 +127,7 @@ class WatchlistSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'added_at')
 
 
-# â”€â”€ Goals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Goals ─────────────────────────────────────────────────────────────────────
 
 class GoalSerializer(serializers.ModelSerializer):
     progress_pct = serializers.SerializerMethodField()
@@ -146,7 +146,7 @@ class GoalSerializer(serializers.ModelSerializer):
         return min(100, round(float(obj.current_saved) / float(obj.target_amount) * 100))
 
 
-# â”€â”€ SIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── SIP ───────────────────────────────────────────────────────────────────────
 
 class SIPLogSerializer(serializers.ModelSerializer):
     class Meta:
@@ -156,7 +156,7 @@ class SIPLogSerializer(serializers.ModelSerializer):
 
     def validate_month(self, value):
         if not (0 <= value <= 11):
-            raise serializers.ValidationError('Month must be 0â€“11.')
+            raise serializers.ValidationError('Month must be 0–11.')
         return value
 
 
@@ -171,7 +171,7 @@ class SIPSettingsSerializer(serializers.ModelSerializer):
         return value
 
 
-# â”€â”€ Daily Tracker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Daily Tracker ─────────────────────────────────────────────────────────────
 
 class DailyTrackerEntrySerializer(serializers.ModelSerializer):
     class Meta:
@@ -185,7 +185,7 @@ class DailyTrackerEntrySerializer(serializers.ModelSerializer):
         return value
 
 
-# â”€â”€ Wallet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Wallet ────────────────────────────────────────────────────────────────────
 
 class WalletTransactionSerializer(serializers.ModelSerializer):
     class Meta:

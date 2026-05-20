@@ -70,6 +70,20 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  // ── Google Login ───────────────────────────────────────────────────────────
+  // Receives the raw Google ID token from GIS, sends it to backend,
+  // sets JWT tokens on success and hydrates the user object.
+  const googleLogin = useCallback(async (credential) => {
+    try {
+      const data = await authApi.googleLogin({ credential });
+      setTokens({ access: data.access, refresh: data.refresh });
+      setUser(data.user);
+      return { success: true };
+    } catch (err) {
+      return { error: err.message || 'Google login failed. Please try again.' };
+    }
+  }, []);
+
   // ── Change Password ────────────────────────────────────────────────────────
   const changePassword = useCallback(async ({ currentPassword, newPassword }) => {
     try {
@@ -126,7 +140,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user, loading,
-      signUp, login, logout,
+      signUp, login, logout, googleLogin,
       changePassword, forgotPassword, resetPassword,
       updateProfile, deleteAccount,
     }}>

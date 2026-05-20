@@ -1,72 +1,80 @@
-/* ─── Wallet Page ─── */
-.wallet-page { max-width: 900px }
+/* RESPONSIVE FIX: Wallet page — mobile-first */
+.wallet-page { width: 100%; max-width: 900px; }
 
 /* Balance Card */
-.wallet-balance-card { padding: 32px; text-align: center; background: linear-gradient(135deg, rgba(0,245,192,.07), rgba(0,168,255,.06)); border: 1px solid rgba(0,245,192,.18) }
-.wbc-label { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); font-family: var(--font-head); margin-bottom: 8px }
-.wbc-amount { font-size: 48px; font-weight: 900; font-family: var(--font-head); color: var(--teal); line-height: 1; margin-bottom: 20px }
-.wbc-subrow { display: flex; align-items: center; justify-content: center; gap: 0; background: var(--bg3); border-radius: 12px; padding: 12px 20px; margin-bottom: 22px; flex-wrap: wrap }
-.wbc-stat { display: flex; flex-direction: column; gap: 3px; padding: 0 20px; text-align: center; font-size: 12px; color: var(--text2) }
+.wallet-balance-card { padding: 20px 16px; text-align: center; background: linear-gradient(135deg, rgba(0,245,192,.07), rgba(0,168,255,.06)); border: 1px solid rgba(0,245,192,.18); }
+.wbc-label { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); font-family: var(--font-head); margin-bottom: 6px }
+/* RESPONSIVE FIX: fluid balance amount */
+.wbc-amount { font-size: clamp(2rem, 8vw, 3rem); font-weight: 900; font-family: var(--font-head); color: var(--teal); line-height: 1; margin-bottom: 16px }
+/* RESPONSIVE FIX: wrap stats row on mobile */
+.wbc-subrow { display: flex; align-items: center; justify-content: center; gap: 0; background: var(--bg3); border-radius: 12px; padding: 10px 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.wbc-stat { display: flex; flex-direction: column; gap: 3px; padding: 6px 14px; text-align: center; font-size: 12px; color: var(--text2) }
 .wbc-stat span:first-child { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3) }
-.wbc-stat span:last-child { font-size: 15px; font-weight: 700; font-family: var(--font-mono) }
-.wbc-divider { width: 1px; height: 32px; background: var(--border); flex-shrink: 0 }
-.wbc-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap }
-.wbc-btn { display: flex; align-items: center; gap: 6px; min-width: 130px; justify-content: center }
+.wbc-stat span:last-child { font-size: 14px; font-weight: 700; font-family: var(--font-mono) }
+.wbc-divider { width: 1px; height: 28px; background: var(--border); flex-shrink: 0 }
+/* RESPONSIVE FIX: full-width buttons on mobile */
+.wbc-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.wbc-btn { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 130px; max-width: 200px; justify-content: center; }
 
-/* Info Grid */
-.wallet-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 0 }
-.wallet-upi-card, .wallet-bank-card { padding: 20px }
-.wui-title { font-family: var(--font-head); font-size: 13.5px; font-weight: 700; margin-bottom: 14px }
+/* RESPONSIVE FIX: stack info grid on mobile */
+.wallet-info-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 0 }
+.wallet-upi-card, .wallet-bank-card { padding: 16px; }
+.wui-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; margin-bottom: 12px }
 .wui-apps { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px }
-.wui-app-chip { display: flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 12px; color: var(--text2) }
+.wui-app-chip { display: flex; align-items: center; gap: 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 6px 12px; font-size: 12px; color: var(--text2); min-height: 36px; }
 .wui-note { font-size: 11px; color: var(--text3); line-height: 1.5; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px }
 .wui-bank-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border) }
 .wui-bank-row:last-child { border-bottom: none }
 .wui-verified { font-size: 10px; color: var(--teal); background: rgba(0,245,192,.1); border: 1px solid rgba(0,245,192,.2); border-radius: 12px; padding: 2px 8px; font-family: var(--font-head); font-weight: 700 }
 
 /* Transactions */
-.wallet-txns { padding: 22px }
-.wtxns-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; flex-wrap: wrap }
+.wallet-txns { padding: 16px; }
+.wtxns-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
 .wtxns-title { font-family: var(--font-head); font-size: 14px; font-weight: 700 }
-.wtxns-filters { display: flex; gap: 6px }
-.wtxn-filter { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg3); color: var(--text3); font-size: 12px; cursor: pointer; font-family: var(--font-head); transition: all var(--transition) }
+/* RESPONSIVE FIX: horizontal scroll for filter tabs */
+.wtxns-filters { display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.wtxns-filters::-webkit-scrollbar { display: none; }
+.wtxn-filter { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg3); color: var(--text3); font-size: 12px; cursor: pointer; font-family: var(--font-head); transition: all var(--transition); white-space: nowrap; min-height: 36px; }
 .wtxn-filter.active { background: rgba(0,245,192,.1); border-color: rgba(0,245,192,.3); color: var(--teal) }
-.wtxns-empty { text-align: center; padding: 48px 20px; color: var(--text2) }
+.wtxns-empty { text-align: center; padding: 40px 20px; color: var(--text2) }
 .wtxns-list { display: flex; flex-direction: column; gap: 2px }
-.wtxn-row { display: flex; align-items: center; gap: 14px; padding: 13px 6px; border-bottom: 1px solid var(--border); transition: background var(--transition) }
+.wtxn-row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--border); transition: background var(--transition) }
 .wtxn-row:last-child { border-bottom: none }
 .wtxn-row:hover { background: rgba(255,255,255,.02); border-radius: 8px }
-.wtxn-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0 }
+.wtxn-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0 }
 .wtxn-icon.deposit { background: rgba(0,245,192,.12); color: var(--teal) }
 .wtxn-icon.withdraw { background: rgba(244,83,108,.12); color: var(--red) }
-.wtxn-desc { font-size: 13px; font-weight: 600; margin-bottom: 2px }
-.wtxn-meta { font-size: 11px; color: var(--text3) }
-.wtxn-amount { font-family: var(--font-mono); font-weight: 700; font-size: 14px }
+.wtxn-desc { font-size: 12.5px; font-weight: 600; margin-bottom: 2px }
+.wtxn-meta { font-size: 10.5px; color: var(--text3) }
+.wtxn-amount { font-family: var(--font-mono); font-weight: 700; font-size: 13.5px; margin-left: auto; }
 .wtxn-amount.deposit { color: var(--teal) }
 .wtxn-amount.withdraw { color: var(--red) }
-.wtxn-status.success { font-size: 16px }
+.wtxn-status.success { font-size: 15px }
 
 /* Disclaimer */
-.wallet-disclaimer { background: rgba(0,168,255,.06); border: 1px solid rgba(0,168,255,.15); border-radius: 10px; padding: 14px 18px; font-size: 12.5px; color: var(--text2); line-height: 1.6 }
+.wallet-disclaimer { background: rgba(0,168,255,.06); border: 1px solid rgba(0,168,255,.15); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--text2); line-height: 1.6 }
 
-/* ─── Modal ─── */
-.wallet-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px }
-.wallet-modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 420px; max-height: 90vh; overflow-y: auto }
-.wm-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 0; font-family: var(--font-head); font-size: 15px; font-weight: 700 }
-.wm-close { background: var(--bg3); border: 1px solid var(--border); border-radius: 50%; width: 28px; height: 28px; cursor: pointer; color: var(--text2); font-size: 13px; display: flex; align-items: center; justify-content: center }
-.wm-body { padding: 18px 22px 22px }
+/* RESPONSIVE FIX: Modal full-screen on mobile */
+.wallet-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; padding: 0; }
+.wallet-modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; max-width: 100%; max-height: 90vh; overflow-y: auto; }
+.wm-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 0; font-family: var(--font-head); font-size: 15px; font-weight: 700 }
+.wm-close { background: var(--bg3); border: 1px solid var(--border); border-radius: 50%; width: 32px; height: 32px; cursor: pointer; color: var(--text2); font-size: 13px; display: flex; align-items: center; justify-content: center }
+.wm-body { padding: 16px 20px 20px; }
 .wm-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); font-family: var(--font-head); margin-bottom: 10px; margin-top: 16px }
 .wm-label:first-child { margin-top: 0 }
-.wm-amount-input-wrap { display: flex; align-items: center; gap: 8px; background: var(--bg3); border: 2px solid var(--border); border-radius: 12px; padding: 12px 18px; margin-bottom: 8px; transition: border-color var(--transition) }
-.wm-amount-input-wrap:focus-within { border-color: var(--teal) }
-.wm-rupee { font-size: 22px; font-family: var(--font-head); font-weight: 700; color: var(--text2) }
-.wm-amount-input { flex: 1; background: none; border: none; outline: none; font-size: 28px; font-family: var(--font-head); font-weight: 800; color: var(--text) }
-.wm-error { font-size: 12px; color: var(--red); margin-top: -4px; margin-bottom: 8px }
-.wm-quick-label { font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--text3); font-family: var(--font-head); margin: 14px 0 8px }
-.wm-quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px }
-.wm-quick-btn { padding: 9px 6px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text2); font-size: 12.5px; cursor: pointer; font-family: var(--font-head); font-weight: 600; transition: all var(--transition) }
-.wm-quick-btn:hover, .wm-quick-btn.active { background: rgba(0,245,192,.1); border-color: rgba(0,245,192,.3); color: var(--teal) }
-.wm-cta { width: 100%; justify-content: center; margin-top: 4px }
+.wm-amount-input-wrap { display: flex; align-items: center; gap: 8px; background: var(--bg3); border: 2px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; transition: border-color var(--transition) }
+.wm-amount-input { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; background: transparent; color: var(--teal); border: none; flex: 1; }
+.wm-quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+/* RESPONSIVE FIX: Desktop restored */
+@media (min-width: 769px) {
+  .wallet-balance-card { padding: 32px; }
+  .wbc-amount { font-size: 3rem; }
+  .wallet-info-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+  .wallet-modal-overlay { align-items: center; padding: 16px; }
+  .wallet-modal { max-width: 420px; border-radius: 20px; }
+  .wallet-txns { padding: 22px; }
+}
 .wm-methods { display: flex; flex-direction: column; gap: 6px }
 .wm-method-btn { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; color: var(--text2); cursor: pointer; font-size: 13px; text-align: left; transition: all var(--transition) }
 .wm-method-btn:hover, .wm-method-btn.active { background: rgba(0,245,192,.07); border-color: rgba(0,245,192,.25); color: var(--text) }

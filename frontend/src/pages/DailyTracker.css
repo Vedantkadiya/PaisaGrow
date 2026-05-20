@@ -217,3 +217,90 @@
   background:var(--red-glow); border:1px solid rgba(255,61,90,.25);
   border-radius:9px; padding:10px 14px; color:var(--red); font-size:13px;
 }
+
+/* ── Mobile: 768px ── */
+@media (max-width: 768px) {
+  /* ── Day log table: make it horizontally scrollable ── */
+  .dt-log-card { overflow-x: auto; overflow-y: hidden; }
+  .dtl-header  { min-width: 460px; }
+  .dtl-list    { min-width: 460px; overflow-x: visible; }
+
+  /* ── Hero card ── */
+  .dt-hero   { padding: 16px 18px; gap: 14px; }
+  .dth-price { font-size: 24px; }
+  .dth-center { min-width: 120px; }
+  .dth-right  { grid-template-columns: repeat(4, 1fr); }
+
+  /* ── Signal card ── */
+  .dt-signal-card { padding: 14px 16px; gap: 14px; }
+  .dsc-left { min-width: unset; }
+
+  /* ── Simulator ── */
+  .dt-simulator { padding: 14px 16px; }
+
+  /* ── Tab bar: scroll horizontally instead of wrapping ── */
+  .dt-tab-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dt-tab-bar::-webkit-scrollbar { display: none; }
+  .dt-tab { white-space: nowrap; flex-shrink: 0; }
+
+  /* ── Indicators: single column ── */
+  .dt-indicators { grid-template-columns: 1fr; gap: 10px; }
+
+  /* ── Investment tabs: scroll horizontally ── */
+  .inv-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .inv-tabs::-webkit-scrollbar { display: none; }
+  .inv-tab { flex-shrink: 0; }
+
+  /* ── Modal ── */
+  .modal-box { padding: 20px 16px; }
+  .modal-title { font-size: 17px; }
+  .modal-actions { flex-direction: column; }
+  .modal-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* ── Small phones: 480px ── */
+@media (max-width: 480px) {
+  .dth-ticker { font-size: 20px; }
+  .dth-price  { font-size: 22px; }
+  .dth-right  { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .dth-center { min-width: unset; }
+  .it-ticker  { font-size: 12px; }
+  .inv-tab    { padding: 7px 10px; gap: 6px; }
+  .signal-lg  { font-size: 14px; padding: 6px 14px; }
+  .indi-card  { padding: 14px; }
+  .pred-conf-row { height: 90px; }
+  .pconf-bar-wrap { height: 62px; }
+  .dt-hero   { flex-direction: column; align-items: flex-start; }
+  .dth-center { text-align: left; }
+}
+
+/* RESPONSIVE FIX: DailyTracker additions */
+.daily-tracker { width: 100%; max-width: 1060px; }
+
+.dt-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:4px }
+
+@media (max-width: 768px) {
+  .dt-hero { padding: 16px; gap: 14px; }
+  .dth-ticker { font-size: 1.375rem; }
+  .inv-tabs { gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; padding-bottom: 4px; }
+  .inv-tabs::-webkit-scrollbar { display: none; }
+  .inv-tab { flex-shrink: 0; }
+}
+
+@media (max-width: 480px) {
+  .dte-icon { font-size: 40px; }
+  .dte-title { font-size: 1.125rem; }
+  .dte-sub { font-size: 12.5px; }
+}

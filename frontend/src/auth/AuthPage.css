@@ -180,3 +180,131 @@
   .auth-card { padding: 28px 20px; }
   .auth-title { font-size: 20px; }
 }
+
+/* RESPONSIVE FIX: AuthPage additional mobile polish */
+@media (max-width: 480px) {
+  .auth-page { padding: 16px 12px; }
+  .auth-card { padding: 24px 16px; border-radius: 16px; }
+  .auth-title { font-size: 1.25rem; }
+  .auth-subtitle { font-size: 12.5px; }
+  .auth-btn { padding: 12px; font-size: 14px; }
+  /* RESPONSIVE FIX: full-width auth card on tiny screens */
+  .auth-card { max-width: 100%; }
+}
+
+@media (max-width: 360px) {
+  .auth-card { padding: 20px 14px; }
+  .auth-logo { font-size: 32px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Google Auth Button — CHANGE: new styles for GIS button wrapper
+══════════════════════════════════════════════════════════════ */
+
+/* "or" divider between email form and Google button */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 16px;
+  color: var(--text3);
+  font-size: 12px;
+  font-family: var(--font-head);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Wrapper for Google button */
+.google-auth-wrap { width: 100%; }
+
+/* GIS renders its own <div> inside here — we just set the width */
+.google-btn-container {
+  width: 100%;
+  min-height: 44px;
+  /* GIS button inherits Google's styling; we just ensure it fills the space */
+  display: flex;
+  justify-content: center;
+}
+
+/* Fade when credential is being verified */
+.google-btn-loading { opacity: 0.6; pointer-events: none; }
+
+/* Placeholder shown while GIS script loads */
+.google-btn-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 44px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text2);
+  font-size: 13px;
+  font-family: var(--font-head);
+}
+
+/* ── Dev-mode reset link box ─────────────────────────────────── */
+.dev-mode-box {
+  background: rgba(255,194,58,.06);
+  border: 1px solid rgba(255,194,58,.22);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.dev-mode-label {
+  font-size: 11px; font-weight: 700;
+  color: var(--gold); font-family: var(--font-head);
+  text-transform: uppercase; letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+.dev-mode-body {
+  font-size: 12.5px; color: var(--text2);
+  line-height: 1.5; margin-bottom: 10px;
+}
+.dev-mode-link {
+  font-family: var(--font-mono); font-size: 10.5px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px;
+  color: var(--blue); word-break: break-all;
+  line-height: 1.4;
+}
+.dev-mode-hint {
+  font-size: 11px; color: var(--text3);
+  line-height: 1.5; margin-top: 10px;
+}
+.dev-mode-hint code {
+  font-family: var(--font-mono);
+  background: var(--bg3); padding: 1px 5px;
+  border-radius: 4px; font-size: 10.5px;
+}
+
+/* ── Sent confirmation tips ───────────────────────────────────── */
+.auth-sent-tips {
+  display: flex; flex-direction: column; gap: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.auth-sent-tips p { font-size: 13px; color: var(--text2); }
+
+/* ── Token OK banner (pre-filled from dev link) ────────────────── */
+.auth-token-ok {
+  background: rgba(0,245,192,.07);
+  border: 1px solid rgba(0,245,192,.2);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 13px; color: var(--teal);
+  font-family: var(--font-head); font-weight: 600;
+  margin-bottom: 16px;
+}
+.auth-field-hint {
+  font-size: 11px; color: var(--text3);
+  font-family: var(--font-mono); margin-top: 3px;
+}

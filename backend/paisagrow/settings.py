@@ -1,32 +1,27 @@
-﻿import os
+import os
 import sys
-from datetime import timedelta
 from pathlib import Path
-
+from datetime import timedelta
 import dj_database_url
-from decouple import Csv, config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config(
-    'DJANGO_SECRET_KEY',
-    default=config('SECRET_KEY', default='change-me-in-production'),
-)
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-in-production-xyz123')
 
-DEBUG = config('DEBUG', default=True, cast=bool)
-TESTING = 'test' in sys.argv
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-if not DEBUG:
-    if SECRET_KEY.startswith('change-me') or len(SECRET_KEY) < 32:
-        raise RuntimeError(
-            'DJANGO_SECRET_KEY/SECRET_KEY must be set to a strong value when DEBUG=False.'
-        )
+# Production guard: refuse to start with the default dev key outside DEBUG mode.
+# This catches misconfigured deploys before they become a security incident.
+_DEV_KEY = 'dev-secret-key-change-in-production-xyz123'
+if not DEBUG and SECRET_KEY == _DEV_KEY:
+    print(
+        'FATAL: DJANGO_SECRET_KEY is not set (still using the dev default). '
+        'Set DJANGO_SECRET_KEY in your environment before deploying.',
+        file=sys.stderr,
+    )
+    sys.exit(1)
 
-ALLOWED_HOSTS = config(
-    'ALLOWED_HOSTS',
-    default='.railway.app,localhost,127.0.0.1',
-    cast=Csv(),
-)
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -35,9 +30,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'api',
 ]
 
@@ -75,84 +71,96 @@ WSGI_APPLICATION = 'paisagrow.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db.sqlite3"}'),
-        conn_max_age=600,
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
     )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = config('TIME_ZONE', default='Asia/Kolkata')
-USE_I18N = True
-USE_TZ = True
+TIME_ZONE     = 'Asia/Kolkata'
+USE_I18N      = True
+USE_TZ        = True
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL          = '/static/'
+STATIC_ROOT         = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD        = 'django.db.models.BigAutoField'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5 MB
 
-# Proxy / HTTPS behavior behind Railway
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-USE_X_FORWARDED_HOST = True
-
-# API + JWT
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-    ),
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon':             '100/day',
+        'user':             '1000/day',
+        'login':            '5/min',
+        'register':         '3/min',
+        'forgot_password':  '3/hour',
+    },
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=config('JWT_ACCESS_MINUTES', default=30, cast=int)),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=config('JWT_REFRESH_DAYS', default=7, cast=int)),
-    'ROTATE_REFRESH_TOKENS': True,
+    'ACCESS_TOKEN_LIFETIME':   timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME':  timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS':   True,
     'BLACKLIST_AFTER_ROTATION': True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_TYPES':       ('Bearer',),
 }
 
-# Frontend + CORS
-FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
-
-CORS_ALLOWED_ORIGINS = config(
+CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:3000,https://localhost:3000',
-    cast=Csv(),
+    'http://localhost:3000,http://127.0.0.1:3000'
+).split(',')
+# Safety check: wildcard CORS with credentials is insecure.
+# NOTE: intentionally not `assert` — Python's -O flag silences asserts.
+if '*' in CORS_ALLOWED_ORIGINS:
+    raise RuntimeError(
+        "Wildcard CORS_ALLOWED_ORIGINS with CORS_ALLOW_CREDENTIALS=True is insecure. "
+        "Set explicit origins in the CORS_ALLOWED_ORIGINS environment variable."
 )
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = config(
-    'CSRF_TRUSTED_ORIGINS',
-    default='https://*.railway.app,http://localhost:3000,https://localhost:3000',
-    cast=Csv(),
-)
+FRONTEND_URL        = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+EMAIL_BACKEND       = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST          = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT          = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS       = True
+EMAIL_HOST_USER     = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL  = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@paisagrow.app')
 
-# Email (used by forgot/reset password)
-EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
-EMAIL_HOST = config('EMAIL_HOST', default='')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='PaisaGrow <noreply@paisagrow.app>')
+# Google OAuth — set GOOGLE_CLIENT_ID to enable "Continue with Google" on the login page.
+# Obtain from: https://console.cloud.google.com/apis/credentials (OAuth 2.0 Client ID)
+GOOGLE_CLIENT_ID    = os.environ.get('GOOGLE_CLIENT_ID', '')
 
-# Cookie/session safety in production
-SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG, cast=bool)
-CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=not DEBUG, cast=bool)
+if not DEBUG:
+    SECURE_SSL_REDIRECT             = True
+    SESSION_COOKIE_SECURE           = True
+    CSRF_COOKIE_SECURE              = True
+    SECURE_HSTS_SECONDS             = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS  = True
+    SECURE_CONTENT_TYPE_NOSNIFF     = True
+    X_FRAME_OPTIONS                 = 'DENY'
+    SECURE_BROWSER_XSS_FILTER       = True
+    SECURE_PROXY_SSL_HEADER         = ('HTTP_X_FORWARDED_PROTO', 'https')

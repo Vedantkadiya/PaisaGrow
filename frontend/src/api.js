@@ -130,6 +130,18 @@ export const auth = {
     return handleResponse(res);
   },
 
+  // ── Google OAuth ────────────────────────────────────────────────────────────
+  // Sends the Google ID token (credential) received from Google Identity Services
+  // to our backend, which verifies it and returns our own JWT pair.
+  async googleLogin({ credential }) {
+    const res = await fetch(`${AUTH_BASE}/api/auth/google/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential }),
+    });
+    return handleResponse(res);
+  },
+
   async forgotPassword({ email }) {
     const res = await fetch(`${AUTH_BASE}/api/auth/forgot-password/`, {
       method: 'POST',

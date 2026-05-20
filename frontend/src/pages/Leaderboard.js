@@ -20,7 +20,7 @@ export default function Leaderboard() {
   );
 
   return (
-    <div style={{ maxWidth: 600, margin: '0 auto', padding: '24px 16px' }}>
+    <div style={{ maxWidth: 600, margin: '0 auto', padding: '16px' }}>
       <h1 style={{ color: 'var(--text)', marginBottom: 8 }}>🏆 Leaderboard</h1>
       <p style={{ color: 'var(--text2)', marginBottom: 24, fontSize: 14 }}>
         Top 10 traders by simulated 1-year return. Names are anonymized.
@@ -38,15 +38,15 @@ export default function Leaderboard() {
 
       {data && data.length > 0 && (
         <div style={{ background: 'var(--card)', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr 100px', background: 'var(--bg3)', padding: '12px 20px', fontSize: 12, color: 'var(--text3)', fontFamily: 'var(--font-head)', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '48px 1fr 90px', background: 'var(--bg3)', padding: '10px 14px', fontSize: 11, color: 'var(--text3)', fontFamily: 'var(--font-head)', textTransform: 'uppercase', letterSpacing: '.06em' }}>
             <span>Rank</span>
             <span>Trader</span>
             <span style={{ textAlign: 'right' }}>Return %</span>
           </div>
           {data.map(row => (
             <div key={row.rank} style={{
-              display: 'grid', gridTemplateColumns: '60px 1fr 100px',
-              padding: '14px 20px',
+              display: 'grid', gridTemplateColumns: '48px 1fr 90px',
+              padding: '12px 14px',
               borderBottom: '1px solid var(--border)',
               background: row.is_me ? 'rgba(34,211,165,0.07)' : 'transparent',
               alignItems: 'center',

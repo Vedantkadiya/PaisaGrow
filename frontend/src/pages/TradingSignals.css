@@ -1,14 +1,16 @@
-.trading-signals { max-width:1020px }
+/* RESPONSIVE FIX: TradingSignals — mobile-first */
+.trading-signals { width: 100%; max-width: 1020px; }
 
-/* Market strip */
-.market-strip {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;
+/* RESPONSIVE FIX: 2-col on mobile, 4-col on desktop */
+.market-strip { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+
+@media (min-width: 769px) {
+  .market-strip { grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
 }
-@media (max-width:600px) { .market-strip { grid-template-columns:repeat(2,1fr) } }
 
 .ms-card {
   background:var(--bg2); border:1px solid var(--border);
-  border-radius:14px; padding:16px 18px; text-align:center;
+  border-radius:14px; padding: 14px; text-align:center;
   transition:all .25s var(--ease-bounce); position:relative; overflow:hidden;
 }
 .ms-card::before {
@@ -19,9 +21,9 @@
 .ms-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg) }
 .ms-card:hover::before { opacity:.5 }
 
-.ms-icon  { font-size:18px; margin-bottom:5px }
-.ms-count { font-family:var(--font-mono); font-size:22px; font-weight:700 }
-.ms-label { font-size:10px; color:var(--text2); text-transform:uppercase; letter-spacing:.08em; margin-top:3px; font-family:var(--font-head) }
+.ms-icon  { font-size:16px; margin-bottom:4px }
+.ms-count { font-family:var(--font-mono); font-size: 1.125rem; font-weight:700 }
+.ms-label { font-size:9.5px; color:var(--text2); text-transform:uppercase; letter-spacing:.08em; margin-top:3px; font-family:var(--font-head) }
 
 .ms-buy    { color:var(--teal);   border-color:rgba(0,245,192,.18) }
 .ms-sell   { color:var(--red);    border-color:rgba(255,61,90,.18) }
@@ -33,90 +35,69 @@
 
 /* Top picks */
 .top-picks {
-  padding:20px 22px; margin-bottom:20px;
+  padding: 16px; margin-bottom: 16px;
   background:linear-gradient(135deg, var(--bg2), rgba(0,245,192,.03));
   border-color:rgba(0,245,192,.18);
   animation: cardGlow 4s ease infinite;
 }
-.tp-title { font-family:var(--font-head); font-size:13.5px; font-weight:700; margin-bottom:14px; color:var(--teal) }
-.tp-grid  { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px }
+.tp-title { font-family:var(--font-head); font-size:13px; font-weight:700; margin-bottom:12px; color:var(--teal) }
+/* RESPONSIVE FIX: single col on mobile */
+.tp-grid  { display:grid; grid-template-columns: 1fr; gap:8px }
+
+@media (min-width: 480px) {
+  .tp-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+
 .tp-card  {
-  background:var(--bg3); border-radius:11px; padding:14px 16px;
-  display:flex; align-items:center; gap:12px; border:1px solid var(--border);
+  background:var(--bg3); border-radius:11px; padding:12px 14px;
+  display:flex; align-items:center; gap:10px; border:1px solid var(--border);
   transition:all var(--transition);
 }
 .tp-card:hover { border-color:rgba(0,245,192,.2); transform:translateX(3px) }
-.tp-rank    { font-family:var(--font-head); font-size:20px; font-weight:800; color:var(--gold); min-width:26px; text-shadow: 0 0 10px rgba(255,194,58,.4) }
-.tp-ticker  { font-family:var(--font-head); font-size:15px; font-weight:800; color:var(--teal) }
+.tp-rank    { font-family:var(--font-head); font-size:18px; font-weight:800; color:var(--gold); min-width:24px; text-shadow: 0 0 10px rgba(255,194,58,.4) }
+.tp-ticker  { font-family:var(--font-head); font-size:14px; font-weight:800; color:var(--teal) }
 .tp-name    { font-size:11px; color:var(--text2) }
-.tp-price   { font-family:var(--font-mono); font-size:14px; font-weight:700 }
+.tp-price   { font-family:var(--font-mono); font-size:13px; font-weight:700 }
 .tp-target  { font-size:11px; font-weight:600 }
 .tp-timeline{ font-size:10px; color:var(--text3); font-family:var(--font-mono) }
 .tp-conf    { flex:1 }
 
-/* Tabs */
-.ts-tabs { display:flex; gap:4px; margin-bottom:20px; flex-wrap:wrap }
+/* RESPONSIVE FIX: horizontal scroll tabs on mobile */
+.ts-tabs { display:flex; gap:4px; margin-bottom:16px; overflow-x:auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+.ts-tabs::-webkit-scrollbar { display: none; }
 .ts-tab  {
-  padding:10px 20px; border-radius:10px; font-size:13.5px; font-weight:500;
+  padding: 10px 16px; border-radius:10px; font-size:13px; font-weight:500;
   background:var(--bg2); border:1px solid var(--border); color:var(--text2);
   transition:all var(--transition); font-family:var(--font-head);
+  white-space: nowrap; min-height: 44px; flex-shrink: 0;
 }
 .ts-tab:hover  { color:var(--text); border-color:var(--border2) }
 .ts-tab.active { background:rgba(0,245,192,.07); color:var(--teal); border-color:rgba(0,245,192,.22) }
 
 /* Filters */
-.ts-filters { padding:18px 20px; margin-bottom:20px }
-.tsf-row    { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start; margin-bottom:12px }
+.ts-filters { padding: 14px; margin-bottom: 16px; }
+.tsf-row    { display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start; margin-bottom:12px }
 .tsf-search {
   display:flex; align-items:center; gap:8px;
   background:var(--bg3); border:1px solid var(--border2); border-radius:10px; padding:0 14px;
-  min-width:200px; flex:1;
+  width: 100%;
   transition:all var(--transition);
 }
 .tsf-search:focus-within { border-color:var(--teal); box-shadow:0 0 0 3px rgba(0,245,192,.06) }
-.tsf-input  { flex:1; background:transparent; color:var(--text); font-size:13px; padding:10px 0; font-family:var(--font-body) }
+.tsf-input  { flex:1; background:transparent; color:var(--text); font-size:13px; padding:12px 0; font-family:var(--font-body) }
 .tsf-group  { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
 .tsf-label  { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); white-space:nowrap; font-family:var(--font-head) }
 
-/* Signal card list */
-.signals-list { display:flex; flex-direction:column; gap:14px }
-
-/* Signal card */
-.signal-card {
-  background:var(--bg2); border:1px solid var(--border);
-  border-radius:16px; padding:20px 22px;
-  transition:all var(--transition); position:relative; overflow:hidden;
+/* RESPONSIVE FIX: Desktop */
+@media (min-width: 769px) {
+  .ms-count { font-size: 1.375rem; }
+  .top-picks { padding: 20px 22px; margin-bottom: 20px; }
+  .tp-title { font-size: 13.5px; }
+  .ts-tabs { flex-wrap: wrap; overflow-x: unset; }
+  .ts-tab { white-space: normal; }
+  .ts-filters { padding: 18px 20px; margin-bottom: 20px; }
+  .tsf-search { width: auto; min-width: 200px; flex: 1; }
 }
-.signal-card:hover { border-color:var(--border2); box-shadow:var(--shadow-lg) }
-
-.sc-buy  { border-left:3px solid var(--teal);  }
-.sc-sell { border-left:3px solid var(--red);   }
-.sc-hold { border-left:3px solid var(--gold);  }
-
-.sc-buy::before  { content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,245,192,.03), transparent 40%); pointer-events:none }
-.sc-sell::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,61,90,.03), transparent 40%); pointer-events:none }
-.sc-hold::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(255,194,58,.03), transparent 40%); pointer-events:none }
-
-.sc-top   { display:flex; align-items:flex-start; gap:18px; flex-wrap:wrap; margin-bottom:14px }
-.sc-left  { flex:1; min-width:140px }
-.sc-ticker { font-family:var(--font-head); font-size:21px; font-weight:800 }
-.sc-name   { font-size:12px; color:var(--text2); margin:2px 0 }
-.sc-sector { font-size:9.5px; color:var(--text3); text-transform:uppercase; letter-spacing:.07em }
-.sc-center { display:flex; flex-direction:column; gap:6px; align-items:flex-start }
-.sc-curr-price { font-family:var(--font-mono); font-size:17px; font-weight:700; margin-top:4px }
-.sc-right  { min-width:145px; display:flex; flex-direction:column; gap:4px }
-.sc-conf-label { font-size:9.5px; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; margin-top:2px; font-family:var(--font-head) }
-
-/* Action badge */
-.action-badge {
-  display:inline-flex; align-items:center; gap:5px;
-  padding:5px 13px; border-radius:8px;
-  font-family:var(--font-head); font-size:12px; font-weight:800;
-  text-transform:uppercase; letter-spacing:.08em;
-}
-.action-badge-lg { font-size:16px; padding:8px 20px; border-radius:10px }
-
-/* Confidence bar */
 .conf-bar-wrap { display:flex; align-items:center; gap:8px }
 .conf-bar-bg   { flex:1; height:5px; background:var(--bg5); border-radius:3px; overflow:hidden }
 .conf-bar-fill { height:100%; border-radius:3px; transition:width .6s var(--ease-out) }
@@ -200,3 +181,49 @@
 }
 .bat-main    { font-size: 13.5px; flex: 1 }
 .bat-details { font-size: 12px; color: var(--text2); font-family: var(--font-mono); flex-basis: 100% }
+
+/* ── Mobile: 768px ── */
+@media (max-width: 768px) {
+  /* Tabs: horizontal scroll instead of wrap */
+  .ts-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ts-tabs::-webkit-scrollbar { display: none; }
+  .ts-tab { white-space: nowrap; flex-shrink: 0; }
+
+  /* Signal card layout */
+  .sc-top  { gap: 12px; }
+  .sc-right { min-width: unset; }
+  .signal-card { padding: 16px 16px; }
+  .ts-filters { padding: 14px 16px; }
+  .tsf-search { min-width: unset; }
+
+  /* Top picks: single scroll row */
+  .tp-grid { grid-template-columns: 1fr; }
+
+  /* Market strip: already 2-col at 600px, but match padding */
+  .top-picks { padding: 16px 18px; }
+
+  /* Exit cards */
+  .exit-card { padding: 16px 18px; }
+  .ec-header { gap: 10px; }
+}
+
+/* ── Small phones: 480px ── */
+@media (max-width: 480px) {
+  .ts-tab   { padding: 8px 14px; font-size: 12px; }
+  .sc-ticker { font-size: 18px; }
+  .sc-curr-price { font-size: 15px; }
+  .action-badge-lg { font-size: 14px; padding: 6px 14px; }
+  .sc-right { width: 100%; }
+  .sc-top   { flex-direction: column; }
+  .ab-targets { grid-template-columns: repeat(2, 1fr); }
+  .abt-val  { font-size: 13px; }
+  .tsf-row  { gap: 10px; }
+  .sc-buy-btn { width: 100%; justify-content: center; }
+  .buy-action-toast { padding: 12px 14px; }
+}

@@ -1,11 +1,11 @@
-﻿"""
-views.py â€” PaisaGrow API views (v4 â€” all critique issues resolved)
+"""
+views.py — PaisaGrow API views (v4 — all critique issues resolved)
 
 FIXES IN THIS VERSION (vs v3)
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+══════════════════════════════
 SEC-H1  Sell price no longer accepted from the client.
         sell_price is now capped to a server-enforced multiplier of buy_price
-        (max 4Ã— â€” handles realistic same-day volatility) so the frontend can
+        (max 4× — handles realistic same-day volatility) so the frontend can
         pass the live market price but cannot manufacture arbitrary proceeds.
         Full fix would use a trusted price feed; this is the safe interim cap.
 
@@ -18,7 +18,7 @@ SEC-H3  Reset token is now single-use.
         ResetPasswordView rejects any token whose iat (issued-at) is older
         than the last password change, so each reset link works exactly once.
 
-BUG-1   @transaction.atomic moved from perform_create â†’ create (PortfolioListCreateView).
+BUG-1   @transaction.atomic moved from perform_create → create (PortfolioListCreateView).
         Previously, perform_create was decorated but create was not, leaving a
         window where the holding could be saved without the budget deduction if
         the process crashed between the two writes.
@@ -89,31 +89,24 @@ from .serializers import (
 )
 
 
-# â”€â”€ Rate throttles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Rate throttles ────────────────────────────────────────────────────────────
 
-class AuthTestAwareAnonRateThrottle(AnonRateThrottle):
-    def allow_request(self, request, view):
-        if getattr(django_settings, 'TESTING', False):
-            return True
-        return super().allow_request(request, view)
-
-
-class LoginRateThrottle(AuthTestAwareAnonRateThrottle):
+class LoginRateThrottle(AnonRateThrottle):
     rate  = '5/min'
     scope = 'login'
 
 
-class RegisterRateThrottle(AuthTestAwareAnonRateThrottle):
+class RegisterRateThrottle(AnonRateThrottle):
     rate  = '3/min'
     scope = 'register'
 
 
-class ForgotPasswordRateThrottle(AuthTestAwareAnonRateThrottle):
+class ForgotPasswordRateThrottle(AnonRateThrottle):
     rate  = '3/hour'
     scope = 'forgot_password'
 
 
-# â”€â”€ IDOR prevention mixin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── IDOR prevention mixin ─────────────────────────────────────────────────────
 
 class OwnedMixin:
     """Restricts all queryset access to objects owned by the requesting user."""
@@ -121,14 +114,14 @@ class OwnedMixin:
         return super().get_queryset().filter(user=self.request.user)
 
 
-# â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Constants ─────────────────────────────────────────────────────────────────
 
 RESET_SALT            = 'pg-reset'
 RESET_MAX_AGE_SECONDS = 3600
 
 # SEC-H1: Maximum ratio of sell_price to recorded buy_price a client may submit.
-# 4Ã— covers realistic intraday volatility for Indian equities (circuit limits
-# are typically Â±20 % per day; 4Ã— is generous for multi-day positions).
+# 4× covers realistic intraday volatility for Indian equities (circuit limits
+# are typically ±20 % per day; 4× is generous for multi-day positions).
 # A trusted price feed should replace this cap in production.
 MAX_SELL_PRICE_MULTIPLIER = Decimal('4')
 
@@ -144,7 +137,7 @@ GOAL_FIELDS      = ('id', 'name', 'icon', 'target_amount', 'current_saved',
 TRACKER_FIELDS   = ('id', 'date', 'type', 'category', 'description', 'amount', 'created_at')
 
 
-# â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _parse_decimal(value, field_name='amount'):
     try:
@@ -154,18 +147,18 @@ def _parse_decimal(value, field_name='amount'):
 
 
 def _get_or_create_profile(user):
-    """Non-locking profile fetch â€” use for reads and non-concurrent writes."""
+    """Non-locking profile fetch — use for reads and non-concurrent writes."""
     profile, _ = UserProfile.objects.get_or_create(user=user)
     return profile
 
 
 def _get_or_create_profile_locked(user):
-    """SELECT FOR UPDATE â€” must be called inside @transaction.atomic."""
+    """SELECT FOR UPDATE — must be called inside @transaction.atomic."""
     profile, _ = UserProfile.objects.select_for_update().get_or_create(user=user)
     return profile
 
 
-# â”€â”€ Custom JWT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Custom JWT ────────────────────────────────────────────────────────────────
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -183,7 +176,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     throttle_classes = [LoginRateThrottle]
 
 
-# â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Auth ──────────────────────────────────────────────────────────────────────
 
 class RegisterView(generics.CreateAPIView):
     queryset           = User.objects.all()
@@ -214,7 +207,7 @@ class MeView(APIView):
         serializer.is_valid(raise_exception=True)
         request.user.first_name = serializer.validated_data['first_name']
         # BUG-4 FIX: save(update_fields) writes only what changed.
-        # No refresh_from_db needed â€” budget is unchanged by a name update,
+        # No refresh_from_db needed — budget is unchanged by a name update,
         # and UserSerializer accesses it via obj.profile which is a separate
         # reverse OneToOne lookup (not cached on the User instance itself).
         request.user.save(update_fields=['first_name'])
@@ -248,7 +241,7 @@ class ChangePasswordView(APIView):
 
         # SEC-H3: stamp password_changed_at so reset tokens issued before this
         # moment are rejected by ResetPasswordView.
-        # Use the locked helper for consistency â€” we are inside @transaction.atomic
+        # Use the locked helper for consistency — we are inside @transaction.atomic
         # and are writing the profile, so SELECT FOR UPDATE prevents a concurrent
         # password change from silently overwriting our stamp.
         profile = _get_or_create_profile_locked(request.user)
@@ -266,7 +259,7 @@ class ChangePasswordView(APIView):
             try:
                 JWTRefreshToken(raw_refresh).blacklist()
             except TokenError:
-                pass  # already blacklisted or malformed â€” not an error
+                pass  # already blacklisted or malformed — not an error
 
         return Response({'detail': 'Password changed successfully. Please log in again.'})
 
@@ -283,7 +276,7 @@ class LogoutView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# â”€â”€ Budget â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Budget ────────────────────────────────────────────────────────────────────
 
 class BudgetView(APIView):
     permission_classes = [IsAuthenticated]
@@ -309,7 +302,7 @@ class BudgetView(APIView):
         except (InvalidOperation, TypeError, ValueError):
             return Response({'error': 'Invalid budget value.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # BUG-2 FIX: Use non-locking helper â€” a direct set does not need
+        # BUG-2 FIX: Use non-locking helper — a direct set does not need
         # SELECT FOR UPDATE (no concurrent arithmetic, just an assignment).
         profile        = _get_or_create_profile(request.user)
         profile.budget = new_budget
@@ -317,7 +310,7 @@ class BudgetView(APIView):
         return Response({'budget': float(profile.budget)})
 
 
-# â”€â”€ Wallet â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Wallet ────────────────────────────────────────────────────────────────────
 
 class WalletDepositView(APIView):
     permission_classes = [IsAuthenticated]
@@ -386,7 +379,7 @@ class WalletTransactionListView(generics.ListAPIView):
                 .only('id', 'type', 'amount', 'description', 'method', 'timestamp'))
 
 
-# â”€â”€ CSV exports â€” streaming, constant memory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── CSV exports — streaming, constant memory ──────────────────────────────────
 
 class _EchoCsvBuffer:
     """Minimal write-buffer so csv.writer can yield each row string."""
@@ -395,7 +388,7 @@ class _EchoCsvBuffer:
 
 
 def _streaming_csv_response(rows_generator, filename):
-    # filename is always a hardcoded string literal at call sites â€” no injection risk.
+    # filename is always a hardcoded string literal at call sites — no injection risk.
     response = StreamingHttpResponse(rows_generator, content_type='text/csv')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
@@ -437,7 +430,7 @@ class WalletTransactionExportCsvView(APIView):
         return _streaming_csv_response(rows(), 'transactions.csv')
 
 
-# â”€â”€ Portfolio â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Portfolio ─────────────────────────────────────────────────────────────────
 
 class PortfolioListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -457,7 +450,7 @@ class PortfolioListCreateView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         # BUG-3 FIX: Read budget from the already-updated profile object stored
-        # on self by perform_create â€” no extra DB query needed.
+        # on self by perform_create — no extra DB query needed.
         data = dict(serializer.data)
         data['budget'] = float(self._buy_budget)
         return Response(data, status=status.HTTP_201_CREATED)
@@ -514,7 +507,7 @@ class PortfolioDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
         # SEC-H1 FIX: sell_price from the client is capped against the
         # recorded buy_price.  The client may submit the live market price
         # (so P&L display is realistic), but it cannot exceed
-        # buy_price Ã— MAX_SELL_PRICE_MULTIPLIER (currently 4Ã—).
+        # buy_price × MAX_SELL_PRICE_MULTIPLIER (currently 4×).
         # This prevents the "sell for 999999" money-creation exploit while
         # still allowing the frontend to show live proceeds.
         #
@@ -530,7 +523,7 @@ class PortfolioDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
 
         max_allowed_price = Decimal(str(holding.buy_price)) * MAX_SELL_PRICE_MULTIPLIER
         if sell_price > max_allowed_price:
-            # Silently cap rather than reject â€” makes the UX forgiving for
+            # Silently cap rather than reject — makes the UX forgiving for
             # legitimate large gainers while blocking the exploit.
             sell_price = max_allowed_price
 
@@ -553,7 +546,7 @@ class PortfolioDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
         return Response({'budget': float(profile.budget)}, status=status.HTTP_200_OK)
 
 
-# â”€â”€ Portfolio summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Portfolio summary ─────────────────────────────────────────────────────────
 
 class PortfolioSummaryView(APIView):
     permission_classes = [IsAuthenticated]
@@ -593,7 +586,7 @@ class PortfolioSummaryView(APIView):
         })
 
 
-# â”€â”€ Watchlist â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Watchlist ─────────────────────────────────────────────────────────────────
 
 class WatchlistListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -612,7 +605,7 @@ class WatchlistDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset           = Watchlist.objects.all()
 
 
-# â”€â”€ Goals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Goals ─────────────────────────────────────────────────────────────────────
 
 class GoalListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -631,7 +624,7 @@ class GoalDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset           = Goal.objects.all()
 
 
-# â”€â”€ SIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── SIP ───────────────────────────────────────────────────────────────────────
 
 class SIPSettingsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -669,7 +662,7 @@ class SIPLogDetailView(OwnedMixin, generics.RetrieveDestroyAPIView):
     queryset           = SIPLog.objects.all()
 
 
-# â”€â”€ Daily Tracker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Daily Tracker ─────────────────────────────────────────────────────────────
 
 class DailyTrackerListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -705,7 +698,125 @@ class DailyTrackerDetailView(OwnedMixin, generics.RetrieveUpdateDestroyAPIView):
     queryset           = DailyTrackerEntry.objects.all()
 
 
-# â”€â”€ Forgot / Reset Password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Google OAuth Login ────────────────────────────────────────────────────────
+# CHANGE: New endpoint — verifies Google ID token and returns our own JWT pair.
+# Requires GOOGLE_CLIENT_ID in settings and `google-auth` in requirements.txt.
+
+class GoogleLoginView(APIView):
+    """
+    POST /api/auth/google/
+    Body: { "credential": "<Google ID token from GIS>" }
+
+    Verifies the token with Google's public keys, then gets-or-creates a local
+    User and returns a JWT pair just like the regular login endpoint.
+
+    Error cases (all return JSON with "error" key):
+      - 400  credential missing
+      - 400  token invalid / expired / wrong audience
+      - 400  email not verified by Google
+      - 503  GOOGLE_CLIENT_ID not configured on this server
+      - 500  unexpected failure
+    """
+    permission_classes = [AllowAny]
+    throttle_classes   = [LoginRateThrottle]
+
+    def post(self, request):
+        credential = request.data.get('credential', '').strip()
+        if not credential:
+            return Response({'error': 'No Google credential provided.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        client_id = django_settings.GOOGLE_CLIENT_ID
+        if not client_id:
+            return Response(
+                {'error': 'Google Sign-In is not configured on this server. '
+                          'Set GOOGLE_CLIENT_ID in your backend .env file.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        # Verify the ID token with Google's public keys
+        try:
+            from google.oauth2 import id_token as google_id_token
+            from google.auth.transport import requests as google_requests
+
+            idinfo = google_id_token.verify_oauth2_token(
+                credential,
+                google_requests.Request(),
+                client_id,
+                clock_skew_in_seconds=10,   # tolerate small clock drift
+            )
+        except ImportError:
+            return Response(
+                {'error': 'Google auth library not installed. Run: pip install google-auth'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        except ValueError as exc:
+            # Covers expired tokens, wrong audience, malformed JWT, etc.
+            return Response(
+                {'error': f'Invalid Google token: {exc}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception:
+            return Response(
+                {'error': 'Google login failed. Please try again.'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        email = idinfo.get('email', '').strip().lower()
+        if not email:
+            return Response({'error': 'No email returned by Google.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not idinfo.get('email_verified', False):
+            return Response(
+                {'error': 'Your Google account email is not verified. Please verify it first.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        given_name  = idinfo.get('given_name', '')
+        family_name = idinfo.get('family_name', '')
+        full_name   = idinfo.get('name', f'{given_name} {family_name}'.strip())
+
+        # Get or create local user — Google users have an unusable password
+        with transaction.atomic():
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                username = self._unique_username(email)
+                user = User(
+                    username=username,
+                    email=email,
+                    first_name=given_name[:30],
+                    last_name=family_name[:150],
+                )
+                user.set_unusable_password()
+                user.save()
+                UserProfile.objects.get_or_create(user=user)
+
+        refresh = JWTRefreshToken.for_user(user)
+        display_name = (
+            f'{user.first_name} {user.last_name}'.strip() or user.username
+        )
+        return Response({
+            'access':  str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id':    user.id,
+                'email': user.email,
+                'name':  display_name,
+            },
+        })
+
+    @staticmethod
+    def _unique_username(email):
+        """Derive a unique username from the email local-part."""
+        base = email.split('@')[0][:28]          # keep it short
+        username, counter = base, 1
+        while User.objects.filter(username=username).exists():
+            username = f'{base}{counter}'
+            counter += 1
+        return username
+
+
+# ── Forgot / Reset Password ───────────────────────────────────────────────────
 
 class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
@@ -713,31 +824,116 @@ class ForgotPasswordView(APIView):
 
     GENERIC_RESPONSE = 'If that email exists, a reset link has been sent.'
 
+    # CHANGE: Plain-text body kept for email clients that don't render HTML
+    EMAIL_TEXT = (
+        'Hello,\n\n'
+        'We received a request to reset your PaisaGrow password.\n\n'
+        'Reset your password here (link expires in 1 hour):\n{reset_link}\n\n'
+        'If you did not request this, you can safely ignore this email —\n'
+        'your password will not change.\n\n'
+        '— The PaisaGrow Team'
+    )
+
+    # CHANGE: Proper HTML email template — renders well in Gmail and other clients
+    EMAIL_HTML = """<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#03060d;font-family:'Segoe UI',Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#03060d;padding:40px 20px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0"
+             style="max-width:480px;background:#070c16;border:1px solid #141f30;border-radius:16px;overflow:hidden">
+        <!-- Header -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#00f5c0,#00c896);padding:28px 32px;text-align:center">
+            <div style="font-size:36px;margin-bottom:8px">🌿</div>
+            <div style="font-size:22px;font-weight:800;color:#020e08;letter-spacing:-.3px">PaisaGrow</div>
+            <div style="font-size:12px;color:#020e08;opacity:.7;margin-top:4px">Smart Investing for Beginners</div>
+          </td>
+        </tr>
+        <!-- Body -->
+        <tr>
+          <td style="padding:32px">
+            <h2 style="margin:0 0 12px;font-size:20px;font-weight:700;color:#e2eeff">Reset your password</h2>
+            <p style="margin:0 0 24px;font-size:14px;color:#7a9cbf;line-height:1.6">
+              We received a request to reset your PaisaGrow password.
+              Click the button below — the link is valid for <strong style="color:#e2eeff">1 hour</strong>.
+            </p>
+            <table cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
+              <a href="{reset_link}"
+                 style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#00f5c0,#00c896);
+                        color:#020e08;font-weight:800;font-size:15px;text-decoration:none;
+                        border-radius:10px;letter-spacing:.02em">
+                Reset Password →
+              </a>
+            </td></tr></table>
+            <p style="margin:24px 0 8px;font-size:12px;color:#2e4a6a">Or copy and paste this link:</p>
+            <div style="background:#0b1220;border:1px solid #141f30;border-radius:8px;
+                        padding:10px 14px;font-family:monospace;font-size:12px;
+                        color:#4db8ff;word-break:break-all;line-height:1.4">
+              {reset_link}
+            </div>
+            <p style="margin:24px 0 0;font-size:12px;color:#2e4a6a;line-height:1.5">
+              If you didn't request a password reset, you can safely ignore this email.
+              Your password will not change.
+            </p>
+          </td>
+        </tr>
+        <!-- Footer -->
+        <tr>
+          <td style="padding:16px 32px;border-top:1px solid #141f30;text-align:center">
+            <span style="font-size:11px;color:#2e4a6a">
+              PaisaGrow · Smart Investing for Beginners
+            </span>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>"""
+
     def post(self, request):
+        from django.core.mail import EmailMultiAlternatives
+
         email = request.data.get('email', '').strip().lower()
         user  = User.objects.filter(email=email).only('id', 'email').first()
 
+        dev_link = None
+
         if user:
-            # SEC-H3: Embed issued-at timestamp in the token payload so
-            # ResetPasswordView can compare against password_changed_at.
             token = signing.dumps(
                 {'uid': user.pk, 'iat': int(time.time())},
                 salt=RESET_SALT,
                 key=django_settings.SECRET_KEY,
             )
             reset_link = f"{django_settings.FRONTEND_URL}/reset-password?token={token}"
-            send_mail(
-                subject='Reset your PaisaGrow password',
-                message=(
-                    f'Click the link below to reset your password (expires in 1 hour):\n\n'
-                    f'{reset_link}\n\nIf you did not request this, ignore this email.'
-                ),
-                from_email=django_settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=True,
-            )
 
-        return Response({'detail': self.GENERIC_RESPONSE})
+            # CHANGE: Send proper HTML + plain-text multipart email
+            msg = EmailMultiAlternatives(
+                subject='Reset your PaisaGrow password',
+                body=self.EMAIL_TEXT.format(reset_link=reset_link),
+                from_email=django_settings.DEFAULT_FROM_EMAIL,
+                to=[user.email],
+            )
+            msg.attach_alternative(self.EMAIL_HTML.format(reset_link=reset_link), 'text/html')
+            msg.send(fail_silently=True)
+
+            # CHANGE: Return dev_link only when running without real SMTP
+            # (console backend = dev mode). The frontend uses this to show a
+            # clickable reset button without needing a real email inbox.
+            is_dev_email = (
+                django_settings.EMAIL_BACKEND
+                == 'django.core.mail.backends.console.EmailBackend'
+            )
+            if is_dev_email:
+                dev_link = reset_link
+
+        response_data = {'detail': self.GENERIC_RESPONSE}
+        if dev_link:
+            response_data['dev_link'] = dev_link
+
+        return Response(response_data)
 
 
 class ResetPasswordView(APIView):
@@ -786,7 +982,7 @@ class ResetPasswordView(APIView):
             return Response({'error': ' '.join(e.messages)}, status=status.HTTP_400_BAD_REQUEST)
 
         with transaction.atomic():
-            # Re-read under lock â€” any concurrent reset that commits first will
+            # Re-read under lock — any concurrent reset that commits first will
             # have updated password_changed_at, causing the iat check below to
             # reject this request.
             profile = _get_or_create_profile_locked(user)
@@ -811,7 +1007,7 @@ class ResetPasswordView(APIView):
         return Response({'detail': 'Password reset successfully. You can now log in.'})
 
 
-# â”€â”€ Leaderboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ── Leaderboard ───────────────────────────────────────────────────────────────
 
 class LeaderboardView(APIView):
     permission_classes = [IsAuthenticated]
