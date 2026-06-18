@@ -138,7 +138,7 @@ if '*' in CORS_ALLOWED_ORIGINS:
     raise RuntimeError(
         "Wildcard CORS_ALLOWED_ORIGINS with CORS_ALLOW_CREDENTIALS=True is insecure. "
         "Set explicit origins in the CORS_ALLOWED_ORIGINS environment variable."
-)
+    )
 CORS_ALLOW_CREDENTIALS = True
 
 FRONTEND_URL        = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
